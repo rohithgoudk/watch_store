@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Stackly — Fine Timepieces</title>
+  <meta name="description" content="Create your Stackly account for early access to limited releases, order tracking, and free engraving on every order." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/signup.css" />
+</head>
+<body class="hero-page auth-page">
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="siteHeader">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <img src="../assets/Logo.webp" alt="Stackly" class="brand-logo">
+    </a>
+
+    <nav class="main-nav" aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="collections.html">Collections</a>
+      <a href="new arrivals.html">New Arrivals</a>
+      <a href="craftsmanship.html">Craftsmanship</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="header-cta">
+      <a href="login.html" class="btn btn-line btn-login">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c1.3-3.6 4-5.4 7-5.4s5.7 1.8 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Login
+      </a>
+      <a href="signup.html" class="btn btn-brass btn-signup active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="10" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M3 20c1.2-3.4 3.7-5.1 7-5.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M18 8v6M15 11h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Sign Up
+      </a>
+      <button class="cart-btn" type="button" aria-label="View cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="21" r="1.4"/><circle cx="18" cy="21" r="1.4"/><path d="M2.5 3h2l2.4 12.2a2 2 0 002 1.6h8.6a2 2 0 002-1.6L21 8H6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="cart-count">0</span>
+      </button>
+      <!-- Hamburger removed completely -->
+    </div>
+  </div>
+</header>
+
+<!-- ============ AUTH / SIGN UP ============ -->
+<main>
+  <section class="auth-section">
+    <div class="auth-bg"></div>
+    <svg class="auth-dial" viewBox="0 0 400 400" fill="none" aria-hidden="true">
+      <circle cx="200" cy="200" r="180" stroke="#B8935A" stroke-width="0.6" opacity="0.5"/>
+      <circle cx="200" cy="200" r="150" stroke="#B8935A" stroke-width="0.6" opacity="0.5"/>
+      <circle cx="200" cy="200" r="120" stroke="#E3C68A" stroke-width="0.4" opacity="0.35"/>
+      <line x1="200" y1="200" x2="200" y2="80" stroke="#E3C68A" stroke-width="1.4"/>
+      <line x1="200" y1="200" x2="260" y2="230" stroke="#B8935A" stroke-width="1.2"/>
+      <circle cx="200" cy="200" r="4" fill="#E3C68A"/>
+    </svg>
+
+    <div class="wrap auth-grid">
+
+      <div class="auth-intro">
+        <span class="eyebrow">Join Stackly · Member Access</span>
+        <h1 class="reveal-up">Every watch,<br><em>worth remembering.</em></h1>
+        <p class="auth-lead reveal-up">Create your account for early access to limited releases, saved orders, free engraving requests, and a direct line to our Columbus atelier.</p>
+
+        <ul class="auth-perks">
+          <li class="reveal-up"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Early access to limited-run pieces</li>
+          <li class="reveal-up"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Free engraving on every order</li>
+          <li class="reveal-up"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Warranty registration and service history</li>
+        </ul>
+
+        <div class="auth-stats reveal-up">
+          <div class="stat-pill"><strong>1998</strong><span>Est. In Columbus, OH</span></div>
+          <div class="stat-pill"><strong>26</strong><span>Watchmaking Awards</span></div>
+          <div class="stat-pill"><strong>40,000+</strong><span>Timepieces Delivered</span></div>
+        </div>
+      </div>
+
+      <div class="auth-card-wrap">
+        <form class="auth-card" id="signupForm" novalidate>
+          <div class="auth-card-head">
+            <span class="eyebrow">Create account</span>
+            <h2>Set up your Stackly ID</h2>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" placeholder="Amara" required autocomplete="given-name">
+            </div>
+            <div class="field">
+              <label for="lastName">Last name</label>
+              <input type="text" id="lastName" placeholder="Solano" required autocomplete="family-name">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="you@email.com" required autocomplete="email">
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="collection">Favorite collection</label>
+              <div class="select-wrap">
+                <select id="collection" required>
+                  <option value="" disabled selected>Select one</option>
+                  <option>The Heritage</option>
+                  <option>The Field</option>
+                  <option>The Atelier</option>
+                  <option>The Minima</option>
+                </select>
+                <svg class="select-icon" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="pass-wrap">
+                <input type="password" id="password" placeholder="At least 8 characters" required minlength="8" autocomplete="new-password">
+                <button type="button" class="pass-toggle" aria-label="Show password">
+                  <svg class="icon-eye" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/></svg>
+                  <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 10.6a3 3 0 004.24 4.24M9.9 5.1A10.6 10.6 0 0112 5c6.4 0 10 7 10 7a15.5 15.5 0 01-3.2 4.1M6.5 6.7C4 8.3 2 12 2 12s3.6 7 10 7c1.2 0 2.3-.2 3.3-.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <label class="check-row">
+            <input type="checkbox" id="terms" required>
+            <span>I agree to Stackly's <a href="404.html">Terms of Service</a> and <a href="404.html">Privacy Policy</a>.</span>
+          </label>
+
+          <div id="formError" class="form-error" role="alert"></div>
+
+          <button type="submit" class="btn btn-brass btn-full">
+            <span class="btn-label">Create account</span>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+
+          <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+        </form>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="brand">
+          <img src="../assets/Logo.webp" alt="Stackly" class="brand-logo">
+        </a>
+        <p>Swiss-movement watches, cased and finished by hand since 1998.</p>
+        <div class="footer-social">
+          <a href="404.html" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.4"/><circle cx="17" cy="7" r="1" fill="currentColor"/></svg></a>
+          <a href="404.html" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none"><path d="M15 4h-2a4 4 0 00-4 4v3H7v4h2v7h4v-7h3l1-4h-4V8a1 1 0 011-1h3V4z" fill="currentColor"/></svg></a>
+          <a href="404.html" aria-label="Pinterest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M9 17c1-3 1.5-5 1.5-5S10 10.5 10 9.5c0-1.5 2-1.7 2-.2 0 1-1 2.5-1 4 0 1.4 1 2.2 2 2.2 2 0 3.3-2.2 3.3-4.6 0-2-1.4-3.6-3.9-3.6-2.8 0-4.5 2-4.5 4.2 0 .8.3 1.6.7 2"/></svg></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="collections.html">Collections</a></li>
+          <li><a href="new arrivals.html">New Arrivals</a></li>
+          <li><a href="craftsmanship.html">Craftsmanship</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Customer Care</h5>
+        <ul>
+          <li><a href="404.html">Shipping &amp; Delivery</a></li>
+          <li><a href="404.html">Returns &amp; Exchanges</a></li>
+          <li><a href="404.html">Warranty Registration</a></li>
+          <li><a href="404.html">Watch Servicing</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Visit the Atelier</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg> <a href="404.html" target="_blank" rel="noopener">MMR Complex, Periyakollappatty, Chinna Thirupathi, Salem, Tamil Nadu 636008</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 5h4l2 5-2.5 1.5a11 11 0 005 5L14 14l5 2v4a2 2 0 01-2 2C9.6 22 2 14.4 2 7a2 2 0 012-2z"/></svg> <a href="404.html">070107 92745</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> <a href="404.html">stackly@info.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Stackly House Horology Co. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="404.html">Privacy Policy</a>
+        <a href="404.html">Terms of Service</a>
+        <a href="404.html">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* =========================================================
+     STACKLY SIGN UP — script
+     ========================================================= */
+  (function () {
+    var header = document.querySelector('.site-header');
+
+    /* ---- Header background swap on scroll ---- */
+    function onScroll() {
+      if (!header) return;
+      if (window.scrollY > 8) header.classList.add('is-scrolled');
+      else header.classList.remove('is-scrolled');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ---- Cart icon: redirects to 404.html ---- */
+    var cartBtn = document.querySelector('.cart-btn');
+    if (cartBtn) {
+      cartBtn.addEventListener('click', function () {
+        window.location.href = '404.html';
+      });
+    }
+
+    /* ---- Page-load reveal ---- */
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var revealTargets = document.querySelectorAll('.reveal-up, .auth-card');
+
+    if (prefersReducedMotion) {
+      revealTargets.forEach(function (el) { el.classList.add('is-visible'); });
+    } else {
+      revealTargets.forEach(function (el, i) {
+        setTimeout(function () { el.classList.add('is-visible'); }, 120 + i * 90);
+      });
+    }
+
+    /* ---- Password visibility toggle ---- */
+    var passToggle = document.querySelector('.pass-toggle');
+    var passwordInput = document.getElementById('password');
+
+    if (passToggle && passwordInput) {
+      passToggle.addEventListener('click', function () {
+        var willShow = passwordInput.getAttribute('type') !== 'text';
+        passwordInput.setAttribute('type', willShow ? 'text' : 'password');
+        passToggle.classList.toggle('is-visible', willShow);
+        passToggle.setAttribute('aria-label', willShow ? 'Hide password' : 'Show password');
+      });
+    }
+
+    /* ---- Form validation ---- */
+    var signupForm = document.getElementById('signupForm');
+    var formError = document.getElementById('formError');
+
+    function showError(message) {
+      formError.textContent = message;
+      formError.style.display = 'block';
+    }
+
+    function clearError() {
+      formError.style.display = 'none';
+      formError.textContent = '';
+    }
+
+    if (signupForm) {
+      signupForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearError();
+
+        var firstName = document.getElementById('firstName').value.trim();
+        var lastName = document.getElementById('lastName').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var collection = document.getElementById('collection').value;
+        var password = passwordInput.value;
+        var terms = document.getElementById('terms').checked;
+
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!firstName || !lastName || !email) {
+          showError('Please fill out all fields.');
+          return;
+        }
+        if (!emailRegex.test(email)) {
+          showError('Please enter a valid email address.');
+          return;
+        }
+        if (!collection) {
+          showError('Please select a favorite collection.');
+          return;
+        }
+        if (password.length < 8) {
+          showError('Password must be at least 8 characters long.');
+          return;
+        }
+        if (!terms) {
+          showError("You must agree to Stackly's Terms of Service.");
+          return;
+        }
+
+        var btn = signupForm.querySelector('.btn-full');
+        var btnLabel = btn.querySelector('.btn-label');
+        btn.style.pointerEvents = 'none';
+        btnLabel.textContent = 'Creating account…';
+
+        setTimeout(function () {
+          btnLabel.textContent = 'Account created';
+          btn.style.background = '#5A8F6B';
+          window.location.href = 'login.html';
+        }, 1400);
+      });
+
+      signupForm.querySelectorAll('input, select').forEach(function (field) {
+        field.addEventListener('input', function () {
+          if (field.checkValidity()) field.classList.remove('is-invalid');
+        });
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

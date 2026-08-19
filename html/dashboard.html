@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account | Stackly — Fine Timepieces</title>
+  <meta name="description" content="Your Stackly account — orders, wishlist, owned watches, service history, and warranty documents." />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+<div class="dashboard-root">
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a class="brand-link" href="index.html" aria-label="Stackly home">
+        <span class="brand-logo-slot">
+          <img id="brand-logo-img" src="../assets/Logo.webp" alt="" class="brand-logo-img"
+               onerror="this.onerror=null;this.style.display='none';document.getElementById('brand-logo-fallback').style.display='flex';document.getElementById('brand-wordmark').style.display='block';">
+          <span class="brand-logo-fallback" id="brand-logo-fallback">S</span>
+          <span class="brand-wordmark" id="brand-wordmark">STACKLY <em>House</em></span>
+        </span>
+      </a>
+      <button class="close-btn" id="close-sidebar-btn" aria-label="Close sidebar">✕</button>
+    </div>
+    <div class="sidebar-section-label">My Account</div>
+    <nav class="sidebar-nav" id="nav-main"></nav>
+    <div class="sidebar-section-label">More</div>
+    <nav class="sidebar-nav" id="nav-management"></nav>
+
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="sidebar-user-avatar" id="sidebar-user-avatar">–</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebar-user-name">Signed out</div>
+        <div class="sidebar-user-email" id="sidebar-user-email">—</div>
+      </div>
+    </div>
+    <button class="logout-full-btn" id="logout-btn">Logout</button>
+  </aside>
+  <main class="main-content">
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger-btn" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="page-title">
+          <h1 id="page-title-text">Dashboard</h1>
+          <p id="page-sub-text"></p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <span class="search-icon"><i data-lucide="search"></i></span>
+          <input placeholder="Search orders, watches…">
+        </div>
+        <button class="icon-btn" id="notif-btn" aria-label="Notifications"><i data-lucide="bell"></i><span class="notif-dot"></span></button>
+
+        <div class="topbar-user" id="topbar-user">
+          <button class="topbar-user-btn" id="topbar-user-btn">
+            <span class="topbar-user-avatar" id="topbar-user-avatar">–</span>
+            <span class="topbar-user-name" id="topbar-user-name">Signed out</span>
+            <span class="topbar-user-caret">▾</span>
+          </button>
+          <div class="topbar-user-menu" id="topbar-user-menu">
+            <div class="topbar-user-menu-email">
+              <div class="label">Email</div>
+              <div class="value" id="topbar-user-email">—</div>
+            </div>
+            <button class="topbar-user-menu-item" data-nav="settings"><i data-lucide="settings"></i> Settings</button>
+            <button class="topbar-user-menu-item danger" id="topbar-logout-btn"><i data-lucide="log-out"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content-area" id="content-area"></div>
+  </main>
+</div>
+<script>
+const collectionAccents = {
+  "The Heritage": "#c6a15b",
+  "The Field": "#8fae7a",
+  "The Atelier": "#c79bd8",
+  "The Minima": "#9aa5b1"
+};
+
+const orders = [
+  { id: 1, name: "Oakhurst Steel 40mm", collection: "The Heritage", channel: "Online Store", type: "New Purchase", status: "Delivered", progress: 100, endDate: "Delivered May 2026", price: "$680", specialist: "Maya Chen" },
+  { id: 2, name: "Basalt Field Auto", collection: "The Field", channel: "Online Store", type: "New Purchase", status: "Shipped", progress: 80, endDate: "Arriving Jun 18", price: "$560", specialist: "Owen Bright" },
+  { id: 3, name: "Reed Slate 34mm", collection: "The Minima", channel: "Atelier Visit", type: "Gift Order", status: "Processing", progress: 35, endDate: "Est. Jun 24", price: "$430", specialist: "Priya Desai" },
+  { id: 4, name: "Solene Gold 36mm", collection: "The Atelier", channel: "Online Store", type: "New Purchase", status: "Delivered", progress: 100, endDate: "Delivered Mar 2026", price: "$2,240", specialist: "Maya Chen" },
+  { id: 5, name: "Cinder Gunmetal 41mm", collection: "The Field", channel: "Online Store", type: "Pre-Order", status: "Processing", progress: 15, endDate: "Est. Aug 2026", price: "$610", specialist: "Owen Bright" },
+  { id: 6, name: "Hollis Two-Tone 38mm", collection: "The Heritage", channel: "Online Store", type: "Warranty Replacement", status: "Shipped", progress: 70, endDate: "Arriving Jun 22", price: "Covered", specialist: "Elena Voss" },
+  { id: 7, name: "Linden Ivory 34mm", collection: "The Minima", channel: "Online Store", type: "New Purchase", status: "Cancelled", progress: 0, endDate: "Cancelled May 2026", price: "$440", specialist: "—" },
+  { id: 8, name: "Cassian Onyx 36mm", collection: "The Atelier", channel: "Atelier Visit", type: "New Purchase", status: "Delivered", progress: 100, endDate: "Delivered Jan 2026", price: "$2,340", specialist: "Elena Voss" }
+];
+
+const wishlist = [
+  { name: "Titanium Field 44mm", sub: "The Field · $690", avatar: "TF", status: "instock", added: 2, note: "Coming soon — you'll be notified first", sku: "STK-TF44" },
+  { name: "Rose Gold Heritage 38mm", sub: "The Heritage · $760", avatar: "RG", status: "lowstock", added: 5, note: "Only 3 left in this size", sku: "STK-RG38" },
+  { name: "Atelier Chronograph", sub: "The Atelier · $2,890", avatar: "AC", status: "instock", added: 9, note: "Ships within 3 business days", sku: "STK-CHR01" },
+  { name: "Basalt Field Auto — Black", sub: "The Field · $560", avatar: "BF", status: "soldout", added: 14, note: "Notify me when restocked", sku: "STK-BF41B" },
+  { name: "Linden Ivory 34mm", sub: "The Minima · $440", avatar: "LI", status: "instock", added: 21, note: "Ships within 3 business days", sku: "STK-LI34" }
+];
+
+const myCollection = [
+  { id: "STK-00142", name: "Oakhurst Steel 40mm", collection: "The Heritage", category: "Dress", date: "May 2026", condition: "Excellent", status: "Under Warranty" },
+  { id: "STK-00098", name: "Solene Gold 36mm", collection: "The Atelier", category: "Limited", date: "Mar 2026", condition: "Excellent", status: "Under Warranty" },
+  { id: "STK-00071", name: "Cassian Onyx 36mm", collection: "The Atelier", category: "Limited", date: "Jan 2026", condition: "Good", status: "Under Warranty" },
+  { id: "STK-00033", name: "Basalt Field Auto", collection: "The Field", category: "Field", date: "Nov 2025", condition: "Needs Service", status: "Service Due" },
+  { id: "STK-00019", name: "Reed Slate 34mm", collection: "The Minima", category: "Minimal", date: "Jun 2025", condition: "Good", status: "Under Warranty" },
+  { id: "STK-00004", name: "Hollis Two-Tone 38mm", collection: "The Heritage", category: "Dress", date: "Feb 2023", condition: "Good", status: "Out of Warranty" }
+];
+
+const serviceHistory = [
+  { title: "Full Movement Service — Oakhurst Steel 40mm", authors: "Technician: Elena Voss", journal: "Columbus Atelier", year: 2026, status: "Completed", reads: 6 },
+  { title: "Regulation Check — Reed Slate 34mm", authors: "Technician: Priya Desai", journal: "Columbus Atelier", year: 2026, status: "Completed", reads: 2 },
+  { title: "Case Polish & Crystal Replacement — Basalt Field Auto", authors: "Technician: Marcus Alli", journal: "Columbus Atelier", year: 2026, status: "In Progress", reads: 0 },
+  { title: "Warranty Inspection — Hollis Two-Tone 38mm", authors: "Technician: Owen Bright", journal: "Mail-In Service", year: 2026, status: "Scheduled", reads: 0 },
+  { title: "Strap Replacement — Solene Gold 36mm", authors: "Technician: Elena Voss", journal: "Columbus Atelier", year: 2025, status: "Completed", reads: 1 }
+];
+
+const serviceCalendar = [
+  { date: "Jun 22", event: "Basalt Field Auto — ready for pickup", site: "Columbus Atelier", type: "urgent" },
+  { date: "Jun 24", event: "Reed Slate 34mm — gift order arrives", site: "Home Delivery", type: "normal" },
+  { date: "Jul 3", event: "Warranty renewal window opens — Hollis Two-Tone", site: "Online", type: "normal" },
+  { date: "Jul 10", event: "Virtual consultation — Titanium Field preview", site: "Virtual", type: "meeting" },
+  { date: "Aug 5", event: "Cinder Gunmetal 41mm — pre-order ships", site: "Online", type: "normal" },
+  { date: "Aug 14", event: "Annual maintenance reminder — Oakhurst Steel", site: "Columbus Atelier", type: "urgent" },
+  { date: "Sep 1", event: "Loyalty tier review", site: "Online", type: "meeting" }
+];
+
+const spending = [
+  { site: "Watches Purchased", allocated: 6890, spent: 6890, office: "The Heritage" },
+  { site: "Service & Repairs", allocated: 1200, spent: 640, office: "The Field" },
+  { site: "Accessories & Straps", allocated: 450, spent: 280, office: "The Minima" },
+  { site: "Engraving & Customization", allocated: 300, spent: 120, office: "The Atelier" },
+  { site: "Solene Gold 36mm — Payment Plan", allocated: 2240, spent: 1680, office: "The Atelier" },
+  { site: "Cinder Gunmetal — Pre-Order Deposit", allocated: 610, spent: 150, office: "The Field" }
+];
+
+const warrantyDocs = [
+  { title: "5-Year Warranty Certificate — Oakhurst Steel 40mm", type: "Warranty Certificate", year: 2026, pages: 2, downloads: 4 },
+  { title: "Care & Maintenance Guide — All Collections", type: "Care Guide", year: 2025, pages: 12, downloads: 9 },
+  { title: "User Manual — Solene Gold 36mm", type: "User Manual", year: 2026, pages: 8, downloads: 3 },
+  { title: "Service Record — Basalt Field Auto", type: "Service Record", year: 2025, pages: 3, downloads: 2 },
+  { title: "Warranty Certificate — Reed Slate 34mm", type: "Warranty Certificate", year: 2025, pages: 2, downloads: 5 }
+];
+
+const activityFeed = [
+  { text: "Your Basalt Field Auto is ready for pickup at the Columbus atelier", time: "2h ago", type: "milestone" },
+  { text: "Cinder Gunmetal 41mm pre-order deposit received", time: "4h ago", type: "performance" },
+  { text: "Warranty registered for Hollis Two-Tone 38mm", time: "Yesterday", type: "complete" },
+  { text: "Shipping delay flagged for Reed Slate 34mm — resolved", time: "Yesterday", type: "alert" },
+  { text: "Titanium Field 44mm restocked — saved in your Wishlist", time: "2d ago", type: "update" },
+  { text: "You reached Gold loyalty tier", time: "3d ago", type: "milestone" },
+  { text: "New care guide added for The Atelier collection", time: "4d ago", type: "update" }
+];
+
+const navIcons = {
+  dashboard: "layout-dashboard", orders: "package", wishlist: "heart", collection: "watch",
+  service: "wrench", calendar: "calendar", spending: "credit-card", warranty: "shield-check", settings: "settings"
+};
+const navItems = [
+  { icon: navIcons.dashboard, label: "Dashboard", id: "dashboard" },
+  { icon: navIcons.orders, label: "My Orders", id: "orders" },
+  { icon: navIcons.wishlist, label: "Wishlist", id: "wishlist" },
+  { icon: navIcons.collection, label: "My Collection", id: "collection" },
+  { icon: navIcons.service, label: "Service History", id: "service" },
+  { icon: navIcons.calendar, label: "Service Calendar", id: "calendar" },
+  { icon: navIcons.spending, label: "Spending & Payments", id: "spending" },
+  { icon: navIcons.warranty, label: "Warranty & Manuals", id: "warranty" },
+  { icon: navIcons.settings, label: "Settings", id: "settings" }
+];
+const statusColors = { "Processing": "status-field", "Shipped": "status-review", "Delivered": "status-active", "Cancelled": "status-cancel" };
+const conditionColor = { "Excellent": "#e8cf98", "Good": "#c6a15b", "Needs Service": "#ff8f7c" };
+const serviceStatusColor = { "Completed": "#7cbf6a", "In Progress": "#e0a94f", "Scheduled": "#9aa5b1" };
+const scheduleTypeColor = { urgent: "#ff6b5c", normal: "#c6a15b", meeting: "#9aa5b1" };
+const pageMap = {
+  dashboard: { title: "Dashboard", sub: "" },
+  orders:    { title: "My Orders", sub: "" },
+  wishlist:  { title: "Wishlist", sub: "" },
+  collection:{ title: "My Collection", sub: "" },
+  service:   { title: "Service History", sub: "" },
+  calendar:  { title: "Service Calendar", sub: "" },
+  spending:  { title: "Spending & Payments", sub: "" },
+  warranty:  { title: "Warranty & Manuals", sub: "" },
+  settings:  { title: "Settings", sub: "" }
+};
+
+// =========================================================
+// SIGNED-IN USER — reads the exact keys login.html writes to
+// localStorage ('stacklyUser' / 'stacklyIsAuthenticated') and
+// reflects them across the sidebar, topbar, and Settings page.
+// =========================================================
+function getCurrentUser() {
+  try {
+    const raw = localStorage.getItem('stacklyUser');
+    const isAuthenticated = localStorage.getItem('stacklyIsAuthenticated') === 'true';
+    if (!raw || !isAuthenticated) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+function usernameFromEmail(email) {
+  if (!email) return '';
+  return email.includes('@') ? email.split('@')[0] : email;
+}
+const currentUser = getCurrentUser();
+const currentEmail = currentUser ? (currentUser.email || '') : '';
+const currentUsername = currentUser ? (currentUser.name || usernameFromEmail(currentEmail)) : '';
+const currentInitial = (currentUsername || currentEmail || '?').charAt(0).toUpperCase();
+
+function paintUserChrome() {
+  const nameToShow = currentUsername || currentEmail || 'Signed out';
+  document.getElementById('sidebar-user-avatar').textContent = currentInitial;
+  document.getElementById('sidebar-user-name').textContent = nameToShow;
+  document.getElementById('sidebar-user-email').textContent = currentEmail || '—';
+  document.getElementById('topbar-user-avatar').textContent = currentInitial;
+  document.getElementById('topbar-user-name').textContent = nameToShow;
+  document.getElementById('topbar-user-email').textContent = currentEmail || '—';
+}
+function logout() {
+  localStorage.removeItem('stacklyUser');
+  localStorage.removeItem('stacklyIsAuthenticated');
+  window.location.href = 'login.html';
+}
+
+let state = {
+  activeNav: "dashboard",
+  orderFilter: "All",
+  collectionSearch: "",
+  settings: { notifications: true, emailDigest: false, darkMode: true, language: "English" }
+};
+
+function fmt(n) { return "$" + n.toLocaleString('en-US'); }
+function go404() { window.location.href = "404.html"; }
+
+function regionTag(collection) {
+  const c = collectionAccents[collection] || "#c6a15b";
+  return `<span class="region-tag" style="color:${c};border-color:${c};background:${c}22;">${collection}</span>`;
+}
+
+function animateStatBars(){
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.stat-bar-fill, .progress-fill').forEach(el => {
+      const target = el.getAttribute('data-w');
+      if (target) el.style.width = target + '%';
+    });
+    const donut = document.querySelector('.donut-svg');
+    if (donut) donut.classList.add('drawn');
+  });
+}
+
+function renderDashboard() {
+  const stats = [
+    { icon: "package", delta: "+2 this year", value: "8", label: "Total Orders", bar: 72, accent: true },
+    { icon: "watch", delta: "+1 this year", value: "6", label: "Watches Owned", bar: 64 },
+    { icon: "credit-card", delta: "Gold Tier", value: "$6,890", label: "Lifetime Spend", bar: 88 },
+    { icon: "shield-check", delta: "2 expiring soon", value: "5", label: "Active Warranties", bar: 90 }
+  ];
+  const statsHtml = stats.map(s =>
+    `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span><span class="stat-delta up">${s.delta}</span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${s.bar}"></div></div>
+    </div>`
+  ).join("");
+
+  const rows = orders.slice(0, 5).map(t =>
+    `<tr>
+      <td><div class="t-name">${t.name}</div><div class="t-sub">${t.channel} · ${t.specialist}</div></td>
+      <td>${regionTag(t.collection)}</td>
+      <td class="type-col">${t.type}</td>
+      <td><span class="status-badge ${statusColors[t.status]}">${t.status}</span></td>
+      <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" data-w="${t.progress}"></div></div><span class="progress-pct">${t.progress}%</span></div></td>
+      <td class="date-col">${t.endDate}</td>
+      <td class="budget-col">${t.price}</td>
+    </tr>`
+  ).join("");
+
+  const feedIcons = { milestone: "trophy", performance: "trending-up", complete: "check-circle-2", alert: "alert-triangle", update: "sparkles" };
+  const feedHtml = activityFeed.map(a =>
+    `<li class="activity-item">
+      <span class="act-icon"><i data-lucide="${feedIcons[a.type] || 'circle'}"></i></span>
+      <div class="act-body"><p class="act-text">${a.text}</p><span class="act-time">${a.time}</span></div>
+    </li>`
+  ).join("");
+
+  const wishHtml = wishlist.slice(0, 5).map(m =>
+    `<li class="team-item">
+      <div class="member-avatar">${m.avatar}<span class="online-dot dot-${m.status}"></span></div>
+      <div class="member-info"><div class="member-name">${m.name}</div><div class="member-role">${m.sub}</div></div>
+      <div class="member-projects"><span class="proj-count">${m.added}</span><span class="proj-label">days</span></div>
+    </li>`
+  ).join("");
+
+  const milestones = [
+    { site: "Columbus Atelier", event: "Basalt Field Auto — ready for pickup", date: "Jun 22", done: false, urgent: true },
+    { site: "Home Delivery", event: "Reed Slate 34mm — gift order arrives", date: "Jun 24", done: false, urgent: false },
+    { site: "Online", event: "Warranty renewal window opens", date: "Jul 03", done: false, urgent: false },
+    { site: "Virtual", event: "Titanium Field preview consultation", date: "Jul 10", done: false, urgent: false },
+    { site: "Solene Gold 36mm", event: "Strap replacement completed", date: "Jun 02", done: true, urgent: false }
+  ];
+  const msHtml = milestones.map(m => {
+    const parts = m.date.split(" ");
+    return `<li class="milestone-item ${m.done ? "ms-done" : ""}">
+      <div class="ms-date"><span>${parts[0]}</span><span>${parts[1]}</span></div>
+      <div class="ms-line"><div class="ms-dot"></div></div>
+      <div class="ms-body"><div class="ms-event">${m.event}</div><div class="ms-project">${m.site}</div></div>
+      ${m.urgent ? '<span class="ms-tag">Urgent</span>' : ''}
+      ${m.done ? '<span class="ms-tag ms-done-tag">Done</span>' : ''}
+    </li>`;
+  }).join("");
+
+  const legend = [
+    { color: collectionAccents["The Heritage"], label: "The Heritage", count: 2 },
+    { color: collectionAccents["The Field"], label: "The Field", count: 2 },
+    { color: collectionAccents["The Atelier"], label: "The Atelier", count: 2 },
+    { color: collectionAccents["The Minima"], label: "The Minima", count: 2 }
+  ];
+  const legendHtml = legend.map(l =>
+    `<li class="legend-item">
+      <span class="legend-dot" style="background:${l.color}"></span>
+      <span class="legend-label">${l.label}</span>
+      <span class="legend-count">${l.count}</span>
+    </li>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <section class="mid-grid">
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Recent Orders</h2><p class="card-sub">Your latest purchases and their status</p></div></div>
+        <div class="table-wrapper"><table class="runs-table"><thead><tr><th>Watch</th><th>Collection</th><th>Order Type</th><th>Status</th><th>Progress</th><th>Delivery</th><th>Price</th></tr></thead><tbody>${rows}</tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Recent Activity</h2><p class="card-sub">Updates on your account</p></div></div>
+        <ul class="activity-list">${feedHtml}</ul>
+      </div>
+    </section>
+    <section class="bottom-grid">
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Wishlist</h2><p class="card-sub">Watches you're watching</p></div></div>
+        <ul class="team-list">${wishHtml}</ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Upcoming</h2><p class="card-sub">Next 60 days</p></div></div>
+        <ul class="milestone-list">${msHtml}</ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Orders by Collection</h2><p class="card-sub">Your purchase spread</p></div></div>
+        <div class="donut-chart">
+          <svg viewBox="0 0 120 120" class="donut-svg">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#241f16" stroke-width="16"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="${collectionAccents["The Heritage"]}" stroke-width="16" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="${collectionAccents["The Field"]}" stroke-width="16" stroke-dashoffset="-52" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="${collectionAccents["The Atelier"]}" stroke-width="16" stroke-dashoffset="-104" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="${collectionAccents["The Minima"]}" stroke-width="16" stroke-dashoffset="-156" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text x="60" y="56" text-anchor="middle" class="donut-num">8</text>
+            <text x="60" y="68" text-anchor="middle" class="donut-label">Total Orders</text>
+          </svg>
+        </div>
+        <ul class="legend-list">${legendHtml}</ul>
+      </div>
+    </section>
+  `;
+}
+
+function renderOrders() {
+  const statuses = ["All", "Processing", "Shipped", "Delivered", "Cancelled"];
+  const filtered = state.orderFilter === "All" ? orders : orders.filter(e => e.status === state.orderFilter);
+  const stats = [
+    { icon: "package", value: orders.length, label: "Total Orders" },
+    { icon: "loader", value: orders.filter(e => e.status === "Processing").length, label: "Processing Now", accent: true },
+    { icon: "truck", value: orders.filter(e => e.status === "Shipped").length, label: "Shipped" },
+    { icon: "check-circle-2", value: orders.filter(e => e.status === "Delivered").length, label: "Delivered" }
+  ];
+  const statsHtml = stats.map((s, i) => {
+    const bar = [100, 60, 40, 80][i];
+    return `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${bar}"></div></div>
+    </div>`;
+  }).join("");
+
+  const filterHtml = statuses.map(s =>
+    `<button class="btn-outline run-filter-btn ${state.orderFilter === s ? "btn-active" : ""}" data-filter="${s}">${s}</button>`
+  ).join("");
+
+  const rows = filtered.map(t =>
+    `<tr>
+      <td><div class="t-name">${t.name}</div><div class="t-sub">${t.channel}</div></td>
+      <td>${regionTag(t.collection)}</td>
+      <td class="type-col">${t.type}</td>
+      <td><span class="status-badge ${statusColors[t.status]}">${t.status}</span></td>
+      <td><div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" data-w="${t.progress}"></div></div><span class="progress-pct">${t.progress}%</span></div></td>
+      <td class="date-col" style="font-size:12px">${t.specialist}</td>
+      <td class="date-col">${t.endDate}</td>
+      <td class="budget-col">${t.price}</td>
+    </tr>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card">
+      <div class="card-header"><div><h2 class="card-title">All Orders</h2><p class="card-sub">Every order you've placed with Stackly</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${filterHtml}</div></div>
+      <div class="table-wrapper"><table class="runs-table"><thead><tr><th>Watch</th><th>Collection</th><th>Order Type</th><th>Status</th><th>Progress</th><th>Care Specialist</th><th>Delivery</th><th>Price</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>
+  `;
+}
+
+function renderWishlist() {
+  const stats = [
+    { icon: "heart", value: wishlist.length, label: "Items Saved", bar: 80 },
+    { icon: "check-circle-2", value: wishlist.filter(m => m.status === "instock").length, label: "In Stock", bar: 85, accent: true },
+    { icon: "alert-triangle", value: wishlist.filter(m => m.status === "lowstock").length, label: "Low Stock", bar: 40 },
+    { icon: "x-circle", value: wishlist.filter(m => m.status === "soldout").length, label: "Sold Out", bar: 20 }
+  ];
+  const statsHtml = stats.map(s =>
+    `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${s.bar}"></div></div>
+    </div>`
+  ).join("");
+
+  const statusLabel = { instock: "In Stock", lowstock: "Low Stock", soldout: "Sold Out" };
+
+  const cards = wishlist.map(m =>
+    `<div class="team-card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <div class="member-avatar" style="width:46px;height:46px;font-size:14px">${m.avatar}<span class="online-dot dot-${m.status}"></span></div>
+        <div><div class="member-name" style="font-size:15px">${m.name}</div><div class="member-role">${m.sub}</div></div>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-dim);line-height:1.9">
+        <div>${statusLabel[m.status]} · SKU ${m.sku}</div>
+        <div>${m.note}</div>
+        <div>Saved ${m.added} day${m.added !== 1 ? "s" : ""} ago</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn-outline" style="border-color:rgba(198,161,91,0.4);color:var(--accent-2)" onclick="go404()">Add to Cart</button>
+        <button class="btn-outline" onclick="go404()">Remove</button>
+      </div>
+    </div>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Saved Watches</h2><p class="card-sub">Everything you're keeping an eye on</p></div></div>
+    <div class="team-grid">${cards}</div></div>
+  `;
+}
+
+function renderCollection() {
+  const q = state.collectionSearch.toLowerCase();
+  const filtered = myCollection.filter(a => a.name.toLowerCase().includes(q) || a.collection.toLowerCase().includes(q));
+  const stats = [
+    { icon: "watch", value: myCollection.length, label: "Watches Owned", bar: 75, accent: true },
+    { icon: "shield-check", value: myCollection.filter(a => a.status === "Under Warranty").length, label: "Under Warranty", bar: 65 },
+    { icon: "sparkles", value: myCollection.filter(a => a.condition === "Excellent").length, label: "Excellent Condition", bar: 55 },
+    { icon: "wrench", value: myCollection.filter(a => a.status === "Service Due").length, label: "Service Due", bar: 20 }
+  ];
+  const statsHtml = stats.map(s =>
+    `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${s.bar}"></div></div>
+    </div>`
+  ).join("");
+
+  const badgeBg = { "Under Warranty": "rgba(198,161,91,0.18)", "Out of Warranty": "rgba(154,165,177,0.18)", "Service Due": "rgba(255,107,92,0.16)" };
+  const badgeColor = { "Under Warranty": "#e8cf98", "Out of Warranty": "#c9d3d9", "Service Due": "#ffb3ac" };
+
+  const rows = filtered.map(a =>
+    `<tr>
+      <td class="type-col" style="font-size:11.5px;font-family:var(--mono)">${a.id}</td>
+      <td><div class="t-name">${a.name}</div><div class="t-sub">${a.collection}</div></td>
+      <td class="date-col">${a.category}</td>
+      <td class="date-col">${a.date}</td>
+      <td><span style="color:${conditionColor[a.condition]};font-weight:700;font-size:12px">${a.condition}</span></td>
+      <td><span class="status-badge" style="background:${badgeBg[a.status]};color:${badgeColor[a.status]}">${a.status}</span></td>
+    </tr>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card">
+      <div class="card-header"><div><h2 class="card-title">My Collection</h2><p class="card-sub">Every Stackly watch you own</p></div>
+      <div class="search-box" style="flex:0 0 auto"><span class="search-icon"><i data-lucide="search"></i></span><input id="collection-search-input" placeholder="Search your collection…" value="${state.collectionSearch}"></div></div>
+      <div class="table-wrapper"><table class="runs-table"><thead><tr><th>Serial</th><th>Watch</th><th>Category</th><th>Purchase Date</th><th>Condition</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>
+  `;
+}
+
+function renderService() {
+  const stats = [
+    { icon: "wrench", value: serviceHistory.length, label: "Service Records", bar: 80, accent: true },
+    { icon: "check-circle-2", value: serviceHistory.filter(p => p.status === "Completed").length, label: "Completed", bar: 70 },
+    { icon: "loader", value: serviceHistory.filter(p => p.status === "In Progress").length, label: "In Progress", bar: 20 },
+    { icon: "calendar-clock", value: serviceHistory.filter(p => p.status === "Scheduled").length, label: "Scheduled", bar: 15 }
+  ];
+  const statsHtml = stats.map(s =>
+    `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${s.bar}"></div></div>
+    </div>`
+  ).join("");
+
+  const cards = serviceHistory.map(p =>
+    `<div class="research-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+          <div style="font-weight:700;color:#efece0;font-size:14px;margin-bottom:4px">${p.title}</div>
+          <div style="font-size:12.5px;color:var(--text-dim);margin-bottom:6px">${p.authors}</div>
+          <div style="font-size:12px;color:var(--text-dimmer)">${p.journal} · ${p.year}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+          <span style="background:${serviceStatusColor[p.status]}22;color:${serviceStatusColor[p.status]};border-radius:999px;padding:3px 10px;font-family:var(--mono);font-size:10.5px;font-weight:700;text-transform:uppercase">${p.status}</span>
+          ${p.reads > 0 ? `<span style="font-size:12px;color:var(--text-dim)">${p.reads} day turnaround</span>` : ''}
+        </div>
+      </div>
+    </div>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Service History</h2><p class="card-sub">Every repair and maintenance visit</p></div></div>
+    <div style="display:flex;flex-direction:column;gap:14px">${cards}</div></div>
+  `;
+}
+
+function renderCalendar() {
+  const rows = serviceCalendar.map(ev => {
+    const parts = ev.date.split(" ");
+    let tag = "";
+    if (ev.type === "urgent") tag = `<span class="evt-tag" style="background:rgba(255,107,92,0.18);color:#ffb3ac">Urgent</span>`;
+    if (ev.type === "meeting") tag = `<span class="evt-tag" style="background:rgba(154,165,177,0.2);color:#c9d3d9">Virtual</span>`;
+    return `<div class="schedule-row">
+      <div style="width:50px;flex-shrink:0;text-align:center">
+        <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:${scheduleTypeColor[ev.type]};text-transform:uppercase;letter-spacing:0.04em">${parts[0]}</div>
+        <div style="font-family:var(--display);font-size:18px;color:#efece0">${parts[1]}</div>
+      </div>
+      <div style="width:3px;align-self:stretch;border-radius:999px;background:${scheduleTypeColor[ev.type]};opacity:0.7;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;color:#efece0;font-size:13.5px">${ev.event}</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:3px">${ev.site}</div>
+      </div>${tag}
+    </div>`;
+  }).join("");
+
+  return `<div class="card"><div class="card-header"><div><h2 class="card-title">Service Calendar</h2><p class="card-sub">Upcoming pickups, deliveries, and appointments</p></div></div>
+    <div style="display:flex;flex-direction:column;gap:4px">${rows}</div></div>`;
+}
+
+function renderSpending() {
+  const totalAllocated = spending.reduce((a, b) => a + b.allocated, 0);
+  const totalSpent = spending.reduce((a, b) => a + b.spent, 0);
+  const remaining = totalAllocated - totalSpent;
+  const utilRate = Math.round((totalSpent / totalAllocated) * 100);
+  const stats = [
+    { icon: "credit-card", value: fmt(totalAllocated), label: "Lifetime Order Value", bar: 100, accent: true },
+    { icon: "wallet", value: fmt(totalSpent), label: "Paid to Date", bar: utilRate },
+    { icon: "piggy-bank", value: fmt(remaining), label: "Remaining Balance", bar: Math.round((remaining / totalAllocated) * 100) },
+    { icon: "percent", value: utilRate + "%", label: "Payment Progress", bar: utilRate }
+  ];
+  const statsHtml = stats.map(s =>
+    `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value" style="font-size:22px">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${s.bar}"></div></div>
+    </div>`
+  ).join("");
+
+  const rows = spending.map(b => {
+    const pct = Math.round((b.spent / b.allocated) * 100);
+    const barGrad = pct >= 100 ? "linear-gradient(90deg,#7cbf6a,#b8dfae)" : "linear-gradient(123deg,#6b5324,#96702e,#c6a15b,#e8cf98)";
+    return `<div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <div><span style="font-weight:700;color:#efece0;font-size:13.5px">${b.site}</span>
+        <span class="region-tag" style="margin-left:10px;color:${collectionAccents[b.office]};border-color:${collectionAccents[b.office]};background:${collectionAccents[b.office]}22;font-size:10.5px">${b.office}</span></div>
+        <div style="text-align:right;font-size:12.5px;color:var(--text-dim)"><span style="color:#efece0;font-weight:700;font-family:var(--mono)">${fmt(b.spent)}</span> / ${fmt(b.allocated)}
+        <span style="margin-left:10px;color:${pct >= 100 ? "#b8dfae" : "#f2d19b"};font-weight:700;font-family:var(--mono)">${pct}%</span></div>
+      </div>
+      <div style="height:8px;background:rgba(242,237,227,0.08);border-radius:999px;overflow:hidden">
+        <div class="progress-fill" data-w="${pct}" style="background:${barGrad};height:100%;transition-delay:.3s"></div>
+      </div>
+    </div>`;
+  }).join('<div style="height:18px"></div>');
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Spending by Category</h2><p class="card-sub">Includes any active payment plans</p></div></div>
+    <div>${rows}</div></div>
+  `;
+}
+
+function renderWarranty() {
+  const stats = [
+    { icon: "shield-check", value: warrantyDocs.length, label: "Documents on File", bar: 80, accent: true },
+    { icon: "download", value: warrantyDocs.reduce((a, p) => a + p.downloads, 0).toLocaleString(), label: "Total Downloads", bar: 90 },
+    { icon: "file-text", value: warrantyDocs.reduce((a, p) => a + p.pages, 0).toLocaleString(), label: "Total Pages", bar: 65 },
+    { icon: "calendar-days", value: "2026", label: "Latest Document", bar: 100 }
+  ];
+  const statsHtml = stats.map(s =>
+    `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${s.bar}"></div></div>
+    </div>`
+  ).join("");
+
+  const cards = warrantyDocs.map(pub =>
+    `<div class="pub-card">
+      <div style="width:30px;height:30px;color:var(--accent-2);margin-bottom:12px"><i data-lucide="file-text" style="width:26px;height:26px"></i></div>
+      <div style="font-weight:700;color:#efece0;font-size:14px;margin-bottom:6px;line-height:1.4">${pub.title}</div>
+      <div style="font-size:12px;color:var(--text-dimmer);margin-bottom:14px">${pub.type} · ${pub.year} · ${pub.pages} pages</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <span style="font-family:var(--mono);font-size:11.5px;color:#e8cf98;font-weight:700">${pub.downloads.toLocaleString()} downloads</span>
+        <button class="btn-outline" style="padding:5px 12px;font-size:10.5px" onclick="go404()">View</button>
+      </div>
+    </div>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Warranty & Manuals</h2><p class="card-sub">Certificates, guides, and service records for your watches</p></div></div>
+    <div class="pub-grid">${cards}</div></div>
+  `;
+}
+
+function toggleHtml(id, value) {
+  return `<div class="toggle-switch" data-toggle="${id}" style="background:${value ? "#c6a15b" : "rgba(242,237,227,0.14)"}">
+    <div class="toggle-knob" style="left:${value ? "20px" : "3px"}"></div></div>`;
+}
+
+function renderSettings() {
+  const s = state.settings;
+  const displayName = currentUsername || currentEmail || "Signed out";
+  const displayEmail = currentEmail || "No account signed in";
+  return `
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Account</h2><p class="card-sub">Signed-in profile — shown wherever your account appears</p></div></div>
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="width:64px;height:64px;border-radius:50%;border:2px solid rgba(198,161,91,0.4);background:var(--accent-soft);color:var(--accent-2);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:24px;text-transform:uppercase;flex-shrink:0">${currentInitial}</div>
+        <div><div style="font-weight:700;color:#efece0;font-size:16px;text-transform:capitalize">${displayName}</div>
+        <div style="font-size:13px;color:var(--text-dim);margin-top:2px">${displayEmail}</div>
+        <div style="font-family:var(--mono);font-size:12px;color:#e8cf98;margin-top:4px">${currentUser ? 'Stackly customer account' : 'Not signed in'}</div></div>
+      </div>
+      <button class="btn-outline" style="border-color:#c6a15b;color:#e8cf98" onclick="go404()">Edit Profile</button>
+    </div>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Preferences</h2><p class="card-sub">Notifications and display</p></div></div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(242,237,227,0.06)">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Order Update Notifications</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">Get alerts when an order ships, arrives, or needs your attention</div></div>
+          ${toggleHtml("notifications", s.notifications)}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(242,237,227,0.06)">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Weekly New Arrivals Email</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">A short digest of new releases and restocks every Monday</div></div>
+          ${toggleHtml("emailDigest", s.emailDigest)}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(242,237,227,0.06)">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Dark Mode</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">Use the dark colour scheme across your account</div></div>
+          ${toggleHtml("darkMode", s.darkMode)}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:18px">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Language</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">Interface display language</div></div>
+          <select class="pref-select" id="lang-select">${["English", "Hindi", "French", "Spanish", "Portuguese"].map(l => `<option ${s.language === l ? "selected" : ""}>${l}</option>`).join("")}</select>
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Session</h2><p class="card-sub">Sign out of this account on this device</p></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+        <div style="font-size:12.5px;color:var(--text-dim)">Signed in as <strong style="color:#efece0">${displayEmail}</strong>. Logging out will clear this session and return you to the sign-in screen.</div>
+        <button class="btn-outline" style="border-color:rgba(255,107,92,0.4);color:#ffb3ac;flex-shrink:0" id="settings-logout-btn">Logout</button>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Danger Zone</h2><p class="card-sub">Irreversible account actions</p></div></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-outline" style="border-color:rgba(255,107,92,0.4);color:#ffb3ac" onclick="go404()">Reset Password</button>
+        <button class="btn-outline" style="border-color:rgba(255,107,92,0.4);color:#ffb3ac" onclick="go404()">Delete Account</button>
+      </div>
+    </div>
+  `;
+}
+
+const pageRenderers = {
+  dashboard: renderDashboard,
+  orders: renderOrders,
+  wishlist: renderWishlist,
+  collection: renderCollection,
+  service: renderService,
+  calendar: renderCalendar,
+  spending: renderSpending,
+  warranty: renderWarranty,
+  settings: renderSettings
+};
+
+function renderNav() {
+  const mainItems = navItems.slice(0, 6);
+  const mgmtItems = navItems.slice(6);
+  function itemHtml(item) {
+    const badge = item.id === "orders" ? `<span class="nav-badge">8</span>` : "";
+    return `<button class="nav-item ${state.activeNav === item.id ? "nav-active" : ""}" data-nav="${item.id}">
+      <span class="nav-icon"><i data-lucide="${item.icon}"></i></span><span>${item.label}</span>${badge}</button>`;
+  }
+  document.getElementById("nav-main").innerHTML = mainItems.map(itemHtml).join("");
+  document.getElementById("nav-management").innerHTML = mgmtItems.map(itemHtml).join("");
+}
+
+function renderPage() {
+  const page = pageMap[state.activeNav];
+  document.getElementById("page-title-text").textContent = page.title;
+  document.getElementById("page-sub-text").textContent = page.sub;
+  document.getElementById("content-area").innerHTML = pageRenderers[state.activeNav]();
+  renderNav();
+  const settingsLogoutBtn = document.getElementById("settings-logout-btn");
+  if (settingsLogoutBtn) settingsLogoutBtn.addEventListener("click", logout);
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  animateStatBars();
+  if (window.lucide) lucide.createIcons();
+}
+
+function navigateTo(id) {
+  state.activeNav = id;
+  closeSidebar();
+  closeTopbarUserMenu();
+  renderPage();
+}
+
+function openSidebar() {
+  document.getElementById("sidebar").classList.add("sidebar-open");
+  document.getElementById("sidebar-overlay").classList.add("show");
+  document.body.classList.add("no-scroll");
+}
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("sidebar-open");
+  document.getElementById("sidebar-overlay").classList.remove("show");
+  document.body.classList.remove("no-scroll");
+}
+function closeTopbarUserMenu() {
+  document.getElementById("topbar-user").classList.remove("open");
+}
+
+document.getElementById("hamburger-btn").addEventListener("click", openSidebar);
+document.getElementById("close-sidebar-btn").addEventListener("click", closeSidebar);
+document.getElementById("sidebar-overlay").addEventListener("click", closeSidebar);
+document.getElementById("notif-btn").addEventListener("click", go404);
+document.getElementById("logout-btn").addEventListener("click", logout);
+document.getElementById("topbar-logout-btn").addEventListener("click", logout);
+document.getElementById("topbar-user-btn").addEventListener("click", function(e) {
+  e.stopPropagation();
+  document.getElementById("topbar-user").classList.toggle("open");
+});
+document.addEventListener("click", closeTopbarUserMenu);
+
+document.addEventListener("click", function(e) {
+  const navBtn = e.target.closest("[data-nav]");
+  if (navBtn) { navigateTo(navBtn.getAttribute("data-nav")); return; }
+  const filterBtn = e.target.closest(".run-filter-btn");
+  if (filterBtn) { state.orderFilter = filterBtn.getAttribute("data-filter"); renderPage(); return; }
+  const toggle = e.target.closest("[data-toggle]");
+  if (toggle) {
+    const key = toggle.getAttribute("data-toggle");
+    state.settings[key] = !state.settings[key];
+    renderPage();
+    return;
+  }
+});
+
+document.addEventListener("input", function(e) {
+  if (e.target && e.target.id === "collection-search-input") {
+    state.collectionSearch = e.target.value;
+    const caretPos = e.target.selectionStart;
+    renderPage();
+    const input = document.getElementById("collection-search-input");
+    if (input) { input.focus(); input.setSelectionRange(caretPos, caretPos); }
+  }
+});
+
+document.addEventListener("change", function(e) {
+  if (e.target && e.target.id === "lang-select") {
+    state.settings.language = e.target.value;
+  }
+});
+
+// Close mobile sidebar automatically if the viewport is resized back to desktop
+window.addEventListener("resize", function() {
+  if (window.innerWidth > 1024) closeSidebar();
+});
+
+paintUserChrome();
+renderPage();
+if (window.lucide) lucide.createIcons();
+
+</script>
+</body>
+</html>

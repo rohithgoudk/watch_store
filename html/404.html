@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 - Not in the Collection</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="../css/404.css">
+</head>
+<body>
+
+<canvas id="movement-canvas"></canvas>
+<div class="grain"></div>
+
+<main class="hero">
+  <div class="card">
+    <div class="badge"><i class="fa-solid fa-magnifying-glass"></i>404 Timepiece </div>
+
+    <div class="watch-wrap">
+      <svg class="watch" viewBox="0 0 220 220">
+        <defs>
+          <linearGradient id="bezelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e0bb84"/>
+            <stop offset="50%" stop-color="#8a6a3c"/>
+            <stop offset="100%" stop-color="#e0bb84"/>
+          </linearGradient>
+          <radialGradient id="dialGrad" cx="50%" cy="35%" r="75%">
+            <stop offset="0%" stop-color="#1c2436"/>
+            <stop offset="100%" stop-color="#0f1420"/>
+          </radialGradient>
+        </defs>
+
+        <circle cx="110" cy="110" r="106" fill="none" stroke="url(#bezelGrad)" stroke-width="6"/>
+        <circle cx="110" cy="110" r="96" fill="url(#dialGrad)" stroke="rgba(182,144,90,0.35)" stroke-width="1"/>
+
+        <!-- hour ticks -->
+        <g stroke="#c9c2b2" stroke-width="2">
+          <line x1="110" y1="20" x2="110" y2="30"/>
+          <line x1="110" y1="190" x2="110" y2="200"/>
+          <line x1="20" y1="110" x2="30" y2="110"/>
+          <line x1="190" y1="110" x2="200" y2="110"/>
+        </g>
+        <g stroke="#6b7285" stroke-width="1.4" opacity="0.7">
+          <line x1="65" y1="27" x2="70" y2="35"/>
+          <line x1="150" y1="27" x2="145" y2="35"/>
+          <line x1="65" y1="193" x2="70" y2="185"/>
+          <line x1="150" y1="193" x2="145" y2="185"/>
+          <line x1="27" y1="65" x2="35" y2="70"/>
+          <line x1="27" y1="150" x2="35" y2="145"/>
+          <line x1="193" y1="65" x2="185" y2="70"/>
+          <line x1="193" y1="150" x2="185" y2="145"/>
+        </g>
+
+        <text x="110" y="60" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="9" letter-spacing="2" fill="#8b8d93">NOT FOUND</text>
+
+        <!-- hands positioned at 4:04 -->
+        <g class="hand" stroke="#efe7d6" stroke-linecap="round">
+          <line x1="110" y1="110" x2="140" y2="140" stroke-width="5" transform="rotate(122 110 110)"/>
+        </g>
+        <g class="hand" stroke="#efe7d6" stroke-linecap="round">
+          <line x1="110" y1="110" x2="110" y2="45" stroke-width="3.5" transform="rotate(24 110 110)"/>
+        </g>
+        <g class="hand hand-second" stroke="#c9793e" stroke-linecap="round">
+          <line x1="110" y1="122" x2="110" y2="38" stroke-width="1.5"/>
+        </g>
+
+        <circle cx="110" cy="110" r="4.5" fill="#e0bb84"/>
+      </svg>
+    </div>
+
+    <p class="ref-plate">Ref. No. <span>404</span></p>
+    <h2 class="error-title">This timepiece isn't in our collection.</h2>
+    <p class="error-desc">
+      The page you're after may have been <strong>discontinued</strong>,
+      <strong>sold</strong>, or was simply never crafted. Let's wind you
+      back to something still on the shelf.
+    </p>
+
+    <div class="action-group">
+      <a href="index.html" class="btn-primary">
+        <i class="fa-solid fa-store"></i> Return to Showroom
+      </a>
+      <button onclick="history.back()" class="btn-outline">
+        <i class="fa-solid fa-arrow-left"></i> Go Back
+      </button>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  const canvas = document.getElementById('movement-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, parts = [];
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const COUNT = Math.min(40, Math.floor((window.innerWidth * window.innerHeight) / 34000));
+  for(let i=0;i<COUNT;i++){
+    parts.push({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: 4 + Math.random()*10,
+      vx: (Math.random()-0.5)*0.12,
+      vy: (Math.random()-0.5)*0.12,
+      rot: Math.random()*Math.PI*2,
+      vrot: (Math.random()-0.5)*0.004,
+      teeth: Math.random() > 0.5
+    });
+  }
+
+  function drawGear(p){
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.strokeStyle = 'rgba(182,144,90,0.45)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(0,0,p.r,0,Math.PI*2);
+    ctx.stroke();
+    if(p.teeth){
+      const teeth = 8;
+      for(let t=0;t<teeth;t++){
+        const a = (t/teeth)*Math.PI*2;
+        const x1 = Math.cos(a)*p.r, y1 = Math.sin(a)*p.r;
+        const x2 = Math.cos(a)*(p.r+4), y2 = Math.sin(a)*(p.r+4);
+        ctx.beginPath();
+        ctx.moveTo(x1,y1);
+        ctx.lineTo(x2,y2);
+        ctx.stroke();
+      }
+    }
+    ctx.beginPath();
+    ctx.arc(0,0,1.5,0,Math.PI*2);
+    ctx.fillStyle = 'rgba(224,187,132,0.5)';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function connect(){
+    ctx.strokeStyle = 'rgba(182,144,90,0.10)';
+    ctx.lineWidth = 1;
+    for(let i=0;i<parts.length;i++){
+      for(let j=i+1;j<parts.length;j++){
+        const dx = parts[i].x - parts[j].x;
+        const dy = parts[i].y - parts[j].y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 160){
+          ctx.beginPath();
+          ctx.moveTo(parts[i].x, parts[i].y);
+          ctx.lineTo(parts[j].x, parts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    connect();
+    for(const p of parts){
+      if(!reduceMotion){
+        p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+        if(p.x < -20) p.x = w+20;
+        if(p.x > w+20) p.x = -20;
+        if(p.y < -20) p.y = h+20;
+        if(p.y > h+20) p.y = -20;
+      }
+      drawGear(p);
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Stackly — Fine Timepieces</title>
+  <meta name="description" content="Sign in to your Stackly account to track orders, register warranties, and book servicing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/login.css" />
+</head>
+<body class="hero-page auth-page">
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="siteHeader">
+  <div class="wrap">
+    <a href="index.html#home" class="brand">
+      <img src="../assets/Logo.webp" alt="Stackly" class="brand-logo" />
+    </a>
+
+    <nav class="main-nav" aria-label="Primary">
+      <a href="index.html#home">Home</a>
+      <a href="collections.html">Collections</a>
+      <a href="newarrivals.html">New Arrivals</a>
+      <a href="craftsmanship.html">Craftsmanship</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="header-cta">
+      <a href="login.html" class="btn btn-line btn-login active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c1.3-3.6 4-5.4 7-5.4s5.7 1.8 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="btn-text">Login</span>
+      </a>
+      <a href="signup.html" class="btn btn-brass btn-signup">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="10" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M3 20c1.2-3.4 3.7-5.1 7-5.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M18 8v6M15 11h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="btn-text">Sign Up</span>
+      </a>
+      <button class="cart-btn" type="button" aria-label="View cart, 0 items">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="21" r="1.4"/><circle cx="18" cy="21" r="1.4"/><path d="M2.5 3h2l2.4 12.2a2 2 0 002 1.6h8.6a2 2 0 002-1.6L21 8H6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="cart-count">0</span>
+      </button>
+      <!-- Hamburger removed completely -->
+    </div>
+  </div>
+</header>
+
+<!-- ============ AUTH HERO / FORM ============ -->
+<section class="auth-section">
+  <div class="auth-bg" style="background-image:url('https://picsum.photos/seed/stackly-auth/1600/1200');"></div>
+  <div class="auth-overlay"></div>
+
+  <svg class="auth-dial" viewBox="0 0 400 400" fill="none" preserveAspectRatio="xMidYMid slice">
+    <circle cx="140" cy="220" r="150" stroke="#B8935A" stroke-width="0.6" opacity="0.5"/>
+    <circle cx="140" cy="220" r="118" stroke="#B8935A" stroke-width="0.6" opacity="0.4"/>
+    <circle cx="140" cy="220" r="86" stroke="#B8935A" stroke-width="0.5" opacity="0.3"/>
+    <line x1="140" y1="220" x2="140" y2="120" stroke="#E8CF98" stroke-width="1.3" opacity="0.7"/>
+    <line x1="140" y1="220" x2="190" y2="250" stroke="#B8935A" stroke-width="1.1" opacity="0.6"/>
+    <circle cx="140" cy="220" r="4" fill="#E8CF98" opacity="0.8"/>
+    <g fill="#B8935A" opacity="0.55">
+      <circle cx="140" cy="70" r="2.4"/>
+      <circle cx="256" cy="130" r="2"/>
+      <circle cx="266" cy="266" r="2"/>
+      <circle cx="140" cy="366" r="2.4"/>
+      <circle cx="24" cy="266" r="2"/>
+      <circle cx="14" cy="130" r="2"/>
+    </g>
+  </svg>
+
+  <div class="wrap auth-inner">
+
+    <div class="auth-text-content on-ink">
+      <span class="eyebrow auth-anim">Client Access · Swiss Movement</span>
+      <h1 class="auth-anim">Welcome back<br />to your<br /><em>collection.</em></h1>
+      <p class="auth-desc auth-anim">Sign in to track an order, register a warranty, book a servicing appointment, or reach your dedicated care specialist — all from one account.</p>
+
+      <div class="auth-stats auth-anim">
+        <span class="stat-pill">40,000+ timepieces delivered</span>
+        <span class="stat-pill">5-year warranty</span>
+        <span class="stat-pill">Est. 1998</span>
+      </div>
+    </div>
+
+    <div class="auth-form-glass auth-anim">
+      <div class="form-head">
+        <span class="eyebrow">Client Account</span>
+        <h2>Sign in</h2>
+      </div>
+
+      <form id="loginForm" novalidate>
+
+        <!-- Role selector: Customer / Employee -->
+        <div class="role-toggle" role="tablist" aria-label="Sign in as">
+          <button type="button" class="role-btn is-active" data-role="customer" role="tab" aria-selected="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.3-3.6 4-5.4 7-5.4s5.7 1.8 7 5.4"/></svg>
+            Customer
+          </button>
+          <button type="button" class="role-btn" data-role="employee" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+            Employee
+          </button>
+        </div>
+        <p class="role-hint" id="roleHint">Signing in as a <strong>Customer</strong> — you'll land on your order &amp; warranty dashboard.</p>
+        <input type="hidden" id="role" value="customer" />
+
+        <div class="input-group">
+          <label for="email"><i class="ic-mail"></i> Email</label>
+          <input type="email" id="email" placeholder="you@email.com" autocomplete="email" required />
+        </div>
+
+        <div class="input-group">
+          <label for="password"><i class="ic-lock"></i> Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="password" placeholder="At least 8 characters" autocomplete="current-password" required />
+            <button type="button" class="btn-toggle-pass" aria-label="Show password">
+              <svg class="eye-open" viewBox="0 0 24 24" fill="none"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+              <svg class="eye-closed" viewBox="0 0 24 24" fill="none"><path d="M3 3l18 18M10.6 10.7a3 3 0 004.1 4.1M6.6 6.7C4.2 8.3 2 12 2 12s3.6 7 10 7c1.7 0 3.1-.5 4.4-1.2M9.9 5.2C10.6 5.1 11.3 5 12 5c6.4 0 10 7 10 7-.5.9-1.3 2-2.3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="remember">
+            <input type="checkbox" id="remember" />
+            <span>Keep me signed in</span>
+          </label>
+          <a href="404.html" class="forgot-pass-link">Forgot password?</a>
+        </div>
+
+        <div id="formError" class="form-error-msg" role="alert"></div>
+        <div id="formSuccess" class="form-success-msg" role="status"></div>
+
+        <button type="submit" class="btn btn-brass btn-submit-auth">
+          <span class="btn-label">Sign In</span>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <p class="auth-switch">New to Stackly? <a href="signup.html">Create an account</a></p>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ TRUST STRIP ============ -->
+<section class="section-tight trust-strip">
+  <div class="wrap">
+    <p class="reveal trust-strip-label">Every account backed by the same promise as every watch</p>
+    <div class="trust-strip-grid">
+      <div class="trust-item reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h4>Swiss Movement</h4>
+        <p>Every caliber regulated in-house to within two seconds a day.</p>
+      </div>
+      <div class="trust-item reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg></div>
+        <h4>5-Year Warranty</h4>
+        <p>Movement, case, and crystal — covered worldwide, tracked from your account.</p>
+      </div>
+      <div class="trust-item reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12h20M12 2c2.5 2.7 4 6.2 4 10s-1.5 7.3-4 10c-2.5-2.7-4-6.2-4-10s1.5-7.3 4-10z"/></svg></div>
+        <h4>Insured Shipping</h4>
+        <p>Track every order in real time, from atelier to doorstep.</p>
+      </div>
+      <div class="trust-item reveal">
+        <div class="why-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.3-3.6 4-5.4 7-5.4s5.7 1.8 7 5.4"/></svg></div>
+        <h4>A Real Care Line</h4>
+        <p>Your dedicated specialist is a message away, not a ticket queue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html#home" class="brand">
+          <img src="../assets/Logo.webp" alt="Stackly" class="brand-logo" />
+        </a>
+        <p>Swiss-movement watches, cased and finished by hand since 1998.</p>
+        <div class="footer-social">
+          <a href="404.html" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.4"/><circle cx="17" cy="7" r="1" fill="currentColor"/></svg></a>
+          <a href="404.html" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none"><path d="M15 4h-2a4 4 0 00-4 4v3H7v4h2v7h4v-7h3l1-4h-4V8a1 1 0 011-1h3V4z" fill="currentColor"/></svg></a>
+          <a href="404.html" aria-label="Pinterest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M9 17c1-3 1.5-5 1.5-5S10 10.5 10 9.5c0-1.5 2-1.7 2-.2 0 1-1 2.5-1 4 0 1.4 1 2.2 2 2.2 2 0 3.3-2.2 3.3-4.6 0-2-1.4-3.6-3.9-3.6-2.8 0-4.5 2-4.5 4.2 0 .8.3 1.6.7 2"/></svg></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="collections.html">Collections</a></li>
+          <li><a href="newarrivals.html">New Arrivals</a></li>
+          <li><a href="craftsmanship.html">Craftsmanship</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Customer Care</h5>
+        <ul>
+          <li><a href="404.html">Shipping &amp; Delivery</a></li>
+          <li><a href="404.html">Returns &amp; Exchanges</a></li>
+          <li><a href="404.html">Warranty Registration</a></li>
+          <li><a href="404.html">Watch Servicing</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Visit the Atelier</h5>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg> <a href="404.html" target="_blank" rel="noopener">MMR Complex, Periyakollappatty, Chinna Thirupathi, Salem, Tamil Nadu 636008</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 5h4l2 5-2.5 1.5a11 11 0 005 5L14 14l5 2v4a2 2 0 01-2 2C9.6 22 2 14.4 2 7a2 2 0 012-2z"/></svg> <a href="404.html">070107 92745</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> <a href="404.html">stackly@info.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Stackly House Horology Co. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="404.html">Privacy Policy</a>
+        <a href="404.html">Terms of Service</a>
+        <a href="404.html">Sitemap</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  /* ---------------------------------------------------
+     Header scroll state (no hamburger)
+  --------------------------------------------------- */
+  (function initHeader() {
+    var header = document.getElementById('siteHeader');
+    function onScroll() {
+      if (!header) return;
+      if (window.scrollY > 8) header.classList.add('is-scrolled');
+      else header.classList.remove('is-scrolled');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+
+  /* ---------------------------------------------------
+     Scroll reveal for trust strip
+  --------------------------------------------------- */
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealEls = document.querySelectorAll('.reveal');
+
+  if (prefersReducedMotion) {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  } else if ('IntersectionObserver' in window) {
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function (el) { revealObserver.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+
+  /* ---------------------------------------------------
+     Auth hero entrance (staggered fade-up)
+  --------------------------------------------------- */
+  var authAnimEls = document.querySelectorAll('.auth-anim');
+  if (prefersReducedMotion) {
+    authAnimEls.forEach(function (el) { el.classList.add('is-visible'); });
+  } else {
+    authAnimEls.forEach(function (el, i) {
+      setTimeout(function () { el.classList.add('is-visible'); }, 150 + i * 110);
+    });
+  }
+
+  /* ---------------------------------------------------
+     Role selector: Customer / Employee
+  --------------------------------------------------- */
+  var CUSTOMER_DASHBOARD = 'dashboard.html';
+  var EMPLOYEE_DASHBOARD = 'admindashboard.html';
+
+  var roleButtons = document.querySelectorAll('.role-btn');
+  var roleInput = document.getElementById('role');
+  var roleHint = document.getElementById('roleHint');
+
+  function setRole(role) {
+    roleInput.value = role;
+    roleButtons.forEach(function (btn) {
+      var isActive = btn.getAttribute('data-role') === role;
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    if (role === 'employee') {
+      roleHint.innerHTML = 'Signing in as an <strong>Employee</strong> — you\'ll land on the staff operations console.';
+    } else {
+      roleHint.innerHTML = 'Signing in as a <strong>Customer</strong> — you\'ll land on your order &amp; warranty dashboard.';
+    }
+  }
+
+  roleButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () { setRole(btn.getAttribute('data-role')); });
+  });
+
+  /* ---------------------------------------------------
+     Password visibility toggle
+  --------------------------------------------------- */
+  const toggleBtn = document.querySelector('.btn-toggle-pass');
+  const passwordInput = document.getElementById('password');
+  const eyeOpenIcon = toggleBtn.querySelector('.eye-open');
+  const eyeClosedIcon = toggleBtn.querySelector('.eye-closed');
+
+  const setPasswordVisibility = (show) => {
+    passwordInput.setAttribute('type', show ? 'text' : 'password');
+    toggleBtn.classList.toggle('is-visible', show);
+    eyeOpenIcon.style.display = show ? 'none' : 'flex';
+    eyeClosedIcon.style.display = show ? 'flex' : 'none';
+    toggleBtn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  };
+
+  setPasswordVisibility(false);
+
+  toggleBtn.addEventListener('click', () => {
+    const willShow = passwordInput.getAttribute('type') !== 'text';
+    setPasswordVisibility(willShow);
+  });
+
+  /* ---------------------------------------------------
+     Form validation + simulated sign-in, routed by role
+  --------------------------------------------------- */
+  const loginForm = document.getElementById('loginForm');
+  const formError = document.getElementById('formError');
+  const formSuccess = document.getElementById('formSuccess');
+  const submitBtn = document.querySelector('.btn-submit-auth');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const showError = (message) => {
+    formSuccess.style.display = 'none';
+    formError.textContent = message;
+    formError.style.display = 'block';
+  };
+
+  const clearMessages = () => {
+    formError.style.display = 'none';
+    formError.textContent = '';
+    formSuccess.style.display = 'none';
+    formSuccess.textContent = '';
+  };
+
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearMessages();
+
+    const email = document.getElementById('email').value.trim();
+    const pass = passwordInput.value;
+    const role = roleInput.value;
+
+    if (!email || !pass) return showError('Please fill out Email and Password.');
+    if (!emailRegex.test(email)) return showError('Please enter a valid email address.');
+    if (pass.length < 8) return showError('Password must be at least 8 characters long.');
+
+    const userRecord = {
+      email: email,
+      name: email.split('@')[0],
+      role: role,
+      remember: document.getElementById('remember').checked,
+      loginTime: Date.now()
+    };
+    localStorage.setItem('stacklyUser', JSON.stringify(userRecord));
+    localStorage.setItem('stacklyIsAuthenticated', 'true');
+    localStorage.setItem('stacklyRole', role);
+
+    const originalLabel = submitBtn.querySelector('.btn-label').textContent;
+    submitBtn.disabled = true;
+    submitBtn.querySelector('.btn-label').textContent = 'Signing in…';
+
+    setTimeout(() => {
+      submitBtn.querySelector('.btn-label').textContent = 'Welcome back!';
+      formSuccess.textContent = role === 'employee'
+        ? "You're signed in. Redirecting you to the staff console…"
+        : "You're signed in. Redirecting you to your account…";
+      formSuccess.style.display = 'block';
+
+      setTimeout(() => {
+        window.location.href = role === 'employee' ? EMPLOYEE_DASHBOARD : CUSTOMER_DASHBOARD;
+      }, 900);
+    }, 1200);
+  });
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stackly · Staff Console</title>
+  <meta name="description" content="Internal operations console — staff, boutique locations, support tickets, and platform status for Stackly." />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="../css/admindashboard.css" />
+</head>
+<body>
+<div class="dashboard-root">
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <a href="index.html" class="brand-link" aria-label="Stackly home">
+          <span class="brand-logo-slot">
+            <img id="brand-logo-img" src="../assets/Logo.webp"
+                 alt="Stackly Staff Console" class="brand-logo-img"
+                 onerror="this.onerror=null;this.style.display='none';document.getElementById('brand-logo-fallback').style.display='flex';document.getElementById('brand-wordmark').style.display='block';">
+            <svg id="brand-logo-fallback" class="brand-logo-fallback" viewBox="0 0 32 32" fill="none" style="display:none;"><circle cx="16" cy="16" r="11" stroke="#c6a15b" stroke-width="1.6" fill="none"/><circle cx="16" cy="16" r="3.5" fill="#c6a15b"/></svg>
+            <span id="brand-wordmark" class="brand-wordmark" style="display:none;">STACKLY<em>.</em></span>
+          </span>
+        </a>
+        <span class="admin-pill">Staff</span>
+      </div>
+      <button class="close-btn" id="close-sidebar-btn" aria-label="Close sidebar">✕</button>
+    </div>
+    <div class="sidebar-section-label">Main menu</div>
+    <nav class="sidebar-nav" id="nav-main"></nav>
+    <div class="sidebar-section-label">Platform</div>
+    <nav class="sidebar-nav" id="nav-management"></nav>
+
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="sidebar-user-avatar" id="sidebar-user-avatar">–</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebar-user-name">Signed out</div>
+        <div class="sidebar-user-email" id="sidebar-user-email">—</div>
+      </div>
+    </div>
+    <button class="logout-full-btn" id="logout-btn">Logout</button>
+  </aside>
+  <main class="main-content">
+    <header class="topbar" id="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger-btn" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="page-title">
+          <h1 id="page-title-text">Dashboard</h1>
+          <p id="page-sub-text"></p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <span class="search-icon"><i data-lucide="search"></i></span>
+          <input placeholder="Search staff, locations, tickets…">
+        </div>
+        <button class="icon-btn" id="notif-btn" aria-label="Notifications"><i data-lucide="bell"></i><span class="notif-dot"></span></button>
+
+        <div class="topbar-user" id="topbar-user">
+          <button class="topbar-user-btn" id="topbar-user-btn">
+            <span class="topbar-user-avatar" id="topbar-user-avatar">–</span>
+            <span class="topbar-user-name" id="topbar-user-name">Signed out</span>
+            <span class="topbar-user-caret">▾</span>
+          </button>
+          <div class="topbar-user-menu" id="topbar-user-menu">
+            <div class="topbar-user-menu-email">
+              <div class="label">Email</div>
+              <div class="value" id="topbar-user-email">—</div>
+            </div>
+            <button class="topbar-user-menu-item" data-nav="settings"><i data-lucide="settings"></i> Settings</button>
+            <button class="topbar-user-menu-item danger" id="topbar-logout-btn"><i data-lucide="log-out"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="content-area" id="content-area"></div>
+  </main>
+</div>
+<script>
+// ------------------- STACKLY STAFF CONSOLE DATA --------------------
+const locationAccents = {
+  "Columbus, OH": "#c6a15b",
+  "New York, NY": "#8fae7a",
+  "London, UK": "#6e93b0",
+  "Salem, IN": "#c79bd8",
+  "Tokyo, JP": "#e3b463",
+  "Sydney, AU": "#9aa5b1"
+};
+
+const staffUsers = [
+  { name: "Elena Voss", email: "e.voss@stackly.com", role: "Master Watchmaker", location: "Columbus, OH", status: "Active", lastLogin: "1h ago", joined: "Jan 2011" },
+  { name: "Owen Bright", email: "o.bright@stackly.com", role: "Workshop Manager", location: "Columbus, OH", status: "Active", lastLogin: "30m ago", joined: "Mar 2015" },
+  { name: "Maya Chen", email: "m.chen@stackly.com", role: "Boutique Manager", location: "New York, NY", status: "Active", lastLogin: "2h ago", joined: "Jun 2019" },
+  { name: "Priya Desai", email: "p.desai@stackly.com", role: "Quality Control Lead", location: "Columbus, OH", status: "Active", lastLogin: "4h ago", joined: "Sep 2018" },
+  { name: "Noah Kessler", email: "n.kessler@stackly.com", role: "Customer Care Lead", location: "London, UK", status: "Active", lastLogin: "1d ago", joined: "Dec 2021" },
+  { name: "Lucia Ferreira", email: "l.ferreira@stackly.com", role: "Analytics Lead", location: "Sydney, AU", status: "Active", lastLogin: "3h ago", joined: "Feb 2022" },
+  { name: "Karan Bhatt", role: "Store Director", email: "k.bhatt@stackly.com", location: "Salem, IN", status: "Invited", lastLogin: "Never", joined: "Pending" },
+  { name: "Marcus Alli", email: "m.alli@stackly.com", role: "Case Finisher", location: "Columbus, OH", status: "Suspended", lastLogin: "20d ago", joined: "Nov 2020" },
+  { name: "Dev Sharma", email: "d.sharma@stackly.com", role: "Super Admin", location: "All Locations", status: "Active", lastLogin: "8m ago", joined: "Aug 2015" },
+  { name: "Ritu Agarwal", email: "r.agarwal@stackly.com", role: "Client Care Rep", location: "Tokyo, JP", status: "Active", lastLogin: "5h ago", joined: "Apr 2023" }
+];
+
+const locationsData = [
+  { name: "Stackly Atelier — Columbus", location: "Columbus, OH", manager: "Owen Bright", status: "Online", lines: 8, uptime: 99.2, floor: "Workshop + Flagship Boutique" },
+  { name: "Stackly Boutique — New York", location: "New York, NY", manager: "Maya Chen", status: "Online", lines: 6, uptime: 98.6, floor: "Retail Boutique" },
+  { name: "Stackly Boutique — London", location: "London, UK", manager: "Noah Kessler", status: "Maintenance", lines: 5, uptime: 89.7, floor: "Retail Boutique" },
+  { name: "Stackly Service Center — Salem", location: "Salem, IN", manager: "Karan Bhatt", status: "Online", lines: 4, uptime: 97.1, floor: "Fulfillment & Service Center" },
+  { name: "Stackly Boutique — Tokyo", location: "Tokyo, JP", manager: "Ritu Agarwal", status: "Online", lines: 3, uptime: 98.8, floor: "Retail Boutique" },
+  { name: "Stackly Boutique — Sydney", location: "Sydney, AU", manager: "Lucia Ferreira", status: "Offline", lines: 2, uptime: 0, floor: "Retail Boutique" }
+];
+
+const rolesData = [
+  { name: "Super Admin", users: 1, permissions: 42, description: "Full platform access — billing, staff, locations, and system settings." },
+  { name: "Store Director", users: 1, permissions: 28, description: "Manage boutique operations, staffing, and regional performance." },
+  { name: "Workshop Manager", users: 1, permissions: 22, description: "Oversee watchmaking bench operations, service queue, and QC." },
+  { name: "Customer Care Lead", users: 1, permissions: 16, description: "Manage the support queue, warranty claims, and client communication." },
+  { name: "Merchandising Lead", users: 1, permissions: 14, description: "Manage catalog, pricing, and new arrival launches." },
+  { name: "Support Specialist", users: 2, permissions: 6, description: "Read-only access to support tickets and order status." }
+];
+
+const ticketsData = [
+  { id: "TCK-2042", subject: "Order #ST-10234 — tracking shows no movement", requester: "Elena Voss", location: "Columbus, OH", priority: "Urgent", status: "In Progress", created: "1h ago" },
+  { id: "TCK-2041", subject: "Warranty claim — Basalt Field Auto crystal crack", requester: "Owen Bright", location: "Columbus, OH", priority: "High", status: "Open", created: "3h ago" },
+  { id: "TCK-2039", subject: "Payment plan installment failed — Solene Gold order", requester: "Noah Kessler", location: "London, UK", priority: "Medium", status: "Open", created: "5h ago" },
+  { id: "TCK-2035", subject: "Engraving request missing from gift order", requester: "Lucia Ferreira", location: "Sydney, AU", priority: "Low", status: "Resolved", created: "2d ago" },
+  { id: "TCK-2028", subject: "Wishlist restock alert not received", requester: "Ritu Agarwal", location: "Tokyo, JP", priority: "High", status: "In Progress", created: "1d ago" }
+];
+
+const invoicesData = [
+  { id: "PLT-2026-024", period: "Jun 2026", plan: "Commerce Plus", amount: "$2,480", status: "Paid", date: "Jun 30, 2026" },
+  { id: "PLT-2026-023", period: "May 2026", plan: "Commerce Plus", amount: "$2,480", status: "Paid", date: "May 31, 2026" },
+  { id: "PLT-2026-022", period: "Apr 2026", plan: "Commerce Plus", amount: "$2,340", status: "Overdue", date: "Apr 30, 2026" },
+  { id: "PLT-2026-021", period: "Mar 2026", plan: "Commerce Plus", amount: "$2,340", status: "Paid", date: "Mar 31, 2026" }
+];
+
+const auditLog = [
+  { time: "11:12 AM", user: "Dev Sharma", action: "Updated Workshop Manager role permissions", target: "Workshop Manager", ip: "203.0.113.21" },
+  { time: "10:03 AM", user: "Karan Bhatt", action: "Approved Salem service center lease renewal", target: "Stackly Service Center — Salem", ip: "198.51.100.11" },
+  { time: "09:45 AM", user: "System", action: "Suspended account after 5 failed logins", target: "m.alli@stackly.com", ip: "—" },
+  { time: "Yesterday", user: "Noah Kessler", action: "Marked location under maintenance", target: "Stackly Boutique — London", ip: "192.0.2.77" },
+  { time: "Yesterday", user: "Dev Sharma", action: "Invited new staff member", target: "k.bhatt@stackly.com", ip: "203.0.113.21" }
+];
+
+const systemServices = [
+  { name: "Stackly Storefront API", status: "ok", uptime: "99.99%", latency: "82ms" },
+  { name: "Payment Processing Gateway", status: "ok", uptime: "99.87%", latency: "124ms" },
+  { name: "Customer Account & SSO", status: "ok", uptime: "99.98%", latency: "71ms" },
+  { name: "Inventory & Warehouse Sync", status: "warn", uptime: "96.40%", latency: "410ms" },
+  { name: "Order Fulfillment Service", status: "ok", uptime: "99.92%", latency: "156ms" },
+  { name: "Sydney Boutique POS Gateway", status: "down", uptime: "88.10%", latency: "—" }
+];
+
+const liveFeed = [
+  { text: "New watch model registered in catalog (The Atelier Chronograph)", time: "15m ago", type: "milestone" },
+  { text: "Sydney boutique POS gateway flagged — ops notified", time: "32m ago", type: "alert" },
+  { text: "Invoice PLT-2026-022 marked overdue", time: "1h ago", type: "billing" },
+  { text: "Workshop Manager permissions updated by Dev Sharma", time: "2h ago", type: "security" },
+  { text: "Q2 boutique performance report ready", time: "4h ago", type: "system" },
+  { text: "Nightly inventory reconciliation completed", time: "6h ago", type: "system" }
+];
+
+const navIcons = {
+  dashboard: "layout-dashboard", users: "users", facilities: "building-2", roles: "shield-check",
+  tickets: "life-buoy", billing: "credit-card", audit: "history", system: "activity", settings: "settings"
+};
+const navItems = [
+  { icon: navIcons.dashboard, label: "Dashboard", id: "dashboard" },
+  { icon: navIcons.users, label: "Staff", id: "users" },
+  { icon: navIcons.facilities, label: "Locations", id: "facilities" },
+  { icon: navIcons.roles, label: "Roles & Access", id: "roles" },
+  { icon: navIcons.tickets, label: "Support Tickets", id: "tickets" },
+  { icon: navIcons.billing, label: "Platform Billing", id: "billing" },
+  { icon: navIcons.audit, label: "Audit Log", id: "audit" },
+  { icon: navIcons.system, label: "System Health", id: "system" },
+  { icon: navIcons.settings, label: "Settings", id: "settings" }
+];
+
+// ---------- THEME ADAPTER (same engine) ----------
+const statusColors = { "Active": "status-active", "Online": "status-active", "Invited": "status-field", "Maintenance": "status-field", "Completed": "status-complete", "Resolved": "status-complete", "Review": "status-review", "In Progress": "status-review", "Open": "status-field", "Suspended": "status-danger", "Offline": "status-danger", "Overdue": "status-danger", "Paid": "status-active" };
+const priorityColor = { "Low": "#9aa5b1", "Medium": "#e3b463", "High": "#d9a26c", "Urgent": "#c97b63" };
+const pageMap = {
+  dashboard: { title: "Dashboard", sub: "Stackly staff console overview" },
+  users:     { title: "Staff", sub: "Team accounts across all locations" },
+  facilities:{ title: "Locations", sub: "Boutiques, workshop & service centers" },
+  roles:     { title: "Roles & Access", sub: "Permission groups" },
+  tickets:   { title: "Support Tickets", sub: "Requests from customers & staff" },
+  billing:   { title: "Platform Billing", sub: "Commerce platform plan & invoices" },
+  audit:     { title: "Audit Log", sub: "System and account activity" },
+  system:    { title: "System Health", sub: "Live storefront service status" },
+  settings:  { title: "Settings", sub: "Admin account & preferences" }
+};
+
+// =========================================================
+// SIGNED-IN USER — reads the exact keys login.html writes to
+// localStorage ('stacklyUser' / 'stacklyIsAuthenticated').
+// =========================================================
+function getCurrentUser() {
+  try {
+    const raw = localStorage.getItem('stacklyUser');
+    const isAuthenticated = localStorage.getItem('stacklyIsAuthenticated') === 'true';
+    if (!raw || !isAuthenticated) return null;
+    return JSON.parse(raw);
+  } catch (e) { return null; }
+}
+function usernameFromEmail(email) {
+  if (!email) return '';
+  return email.includes('@') ? email.split('@')[0] : email;
+}
+const currentUser = getCurrentUser();
+const currentEmail = currentUser ? (currentUser.email || '') : '';
+const currentUsername = currentUser ? (currentUser.name || usernameFromEmail(currentEmail)) : '';
+const currentInitial = (currentUsername || currentEmail || '?').charAt(0).toUpperCase();
+
+function paintUserChrome() {
+  const nameToShow = currentUsername || currentEmail || 'Signed out';
+  document.getElementById('sidebar-user-avatar').textContent = currentInitial;
+  document.getElementById('sidebar-user-name').textContent = nameToShow;
+  document.getElementById('sidebar-user-email').textContent = currentEmail || '—';
+  document.getElementById('topbar-user-avatar').textContent = currentInitial;
+  document.getElementById('topbar-user-name').textContent = nameToShow;
+  document.getElementById('topbar-user-email').textContent = currentEmail || '—';
+}
+function logout() {
+  localStorage.removeItem('stacklyUser');
+  localStorage.removeItem('stacklyIsAuthenticated');
+  window.location.href = 'login.html';
+}
+
+let state = {
+  activeNav: "dashboard",
+  userFilter: "All",
+  ticketFilter: "All",
+  userSearch: "",
+  settings: { notifications: true, emailDigest: false, darkMode: true, language: "English" }
+};
+
+function go404() { window.location.href = "404.html"; }
+function regionTag(location) {
+  const c = locationAccents[location] || "#c6a15b";
+  return `<span class="region-tag" style="color:${c};border-color:${c};background:${c}22;">${location}</span>`;
+}
+function animateStatBars(){
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.stat-bar-fill, .progress-fill').forEach(el => {
+      const target = el.getAttribute('data-w');
+      if (target) el.style.width = target + '%';
+    });
+    const donut = document.querySelector('.donut-svg');
+    if (donut) donut.classList.add('drawn');
+  });
+}
+
+// ---------- RENDER FUNCTIONS ----------
+function renderDashboard() {
+  const stats = [
+    { icon: "users", delta: "+3 this month", value: staffUsers.length, label: "Total Staff", bar: 78, accent: true },
+    { icon: "building-2", delta: "5 of 6 online", value: "6", label: "Locations", bar: 84 },
+    { icon: "life-buoy", delta: "2 urgent", value: ticketsData.filter(t => t.status !== "Resolved").length, label: "Open Tickets", bar: 46 },
+    { icon: "activity", delta: "1 degraded", value: "99.1%", label: "Storefront Uptime", bar: 99 }
+  ];
+  const statsHtml = stats.map(s =>
+    `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span><span class="stat-delta ${s.icon === 'building-2' ? 'warn' : 'up'}">${s.delta}</span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${s.bar}"></div></div>
+    </div>`
+  ).join("");
+
+  const rows = staffUsers.slice(0, 5).map(u =>
+    `<tr>
+      <td><div class="t-name">${u.name}</div><div class="t-sub">${u.email}</div></td>
+      <td>${regionTag(u.location)}</td>
+      <td class="type-col">${u.role}</td>
+      <td><span class="status-badge ${statusColors[u.status]}">${u.status}</span></td>
+      <td class="date-col">${u.lastLogin}</td>
+      <td class="date-col">${u.joined}</td>
+    </tr>`
+  ).join("");
+
+  const feedIcons = { milestone: "trophy", performance: "trending-up", complete: "check-circle-2", alert: "alert-triangle", billing: "credit-card", security: "shield-alert", system: "server", update: "sparkles" };
+  const feedHtml = liveFeed.map(a =>
+    `<li class="activity-item">
+      <span class="act-icon"><i data-lucide="${feedIcons[a.type] || 'circle'}"></i></span>
+      <div class="act-body"><p class="act-text">${a.text}</p><span class="act-time">${a.time}</span></div>
+    </li>`
+  ).join("");
+
+  const locationHtml = locationsData.slice(0, 5).map(f =>
+    `<li class="team-item">
+      <div class="member-avatar">${f.location.slice(0,2).toUpperCase()}<span class="online-dot ${f.status === 'Online' ? 'dot-active' : f.status === 'Maintenance' ? 'dot-away' : 'dot-suspended'}"></span></div>
+      <div class="member-info"><div class="member-name">${f.name}</div><div class="member-role">${f.manager} · ${f.lines} staff</div></div>
+      <div class="member-projects"><span class="proj-count">${f.uptime}%</span><span class="proj-label">uptime</span></div>
+    </li>`
+  ).join("");
+
+  const ticketPreview = ticketsData.slice(0, 5).map(t =>
+    `<li class="milestone-item">
+      <div class="ms-date"><span>${t.id.split('-')[1].slice(0,2)}</span><span>#${t.id.split('-')[1].slice(2)}</span></div>
+      <div class="ms-line"><div class="ms-dot" style="background:${priorityColor[t.priority]}"></div></div>
+      <div class="ms-body"><div class="ms-event">${t.subject}</div><div class="ms-project">${t.requester} · ${t.location}</div></div>
+      <span class="ms-tag" style="background:${priorityColor[t.priority]}22;color:${priorityColor[t.priority]}">${t.priority}</span>
+    </li>`
+  ).join("");
+
+  const legend = [
+    { color: "#8fae7a", label: "Active staff", count: staffUsers.filter(u=>u.status==="Active").length },
+    { color: "#e3b463", label: "Invited", count: staffUsers.filter(u=>u.status==="Invited").length },
+    { color: "#c97b63", label: "Suspended", count: staffUsers.filter(u=>u.status==="Suspended").length },
+    { color: "#9aa5b1", label: "Other", count: 1 }
+  ];
+  const legendHtml = legend.map(l =>
+    `<li class="legend-item">
+      <span class="legend-dot" style="background:${l.color}"></span>
+      <span class="legend-label">${l.label}</span>
+      <span class="legend-count">${l.count}</span>
+    </li>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <section class="mid-grid">
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Recent Staff Activity</h2><p class="card-sub">Latest account activity</p></div></div>
+        <div class="table-wrapper"><table class="runs-table"><thead><tr><th>Staff Member</th><th>Location</th><th>Role</th><th>Status</th><th>Last Login</th><th>Joined</th></tr></thead><tbody>${rows}</tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Live Feed</h2><p class="card-sub">Store-wide events</p></div></div>
+        <ul class="activity-list">${feedHtml}</ul>
+      </div>
+    </section>
+    <section class="bottom-grid">
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Locations</h2><p class="card-sub">Status &amp; uptime</p></div></div>
+        <ul class="team-list">${locationHtml}</ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Open Tickets</h2><p class="card-sub">By priority</p></div></div>
+        <ul class="milestone-list">${ticketPreview}</ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><h2 class="card-title">Staff Status</h2><p class="card-sub">Across the console</p></div></div>
+        <div class="donut-chart">
+          <svg viewBox="0 0 120 120" class="donut-svg">
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#1a1f28" stroke-width="16"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#8fae7a" stroke-width="16" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#e3b463" stroke-width="16" stroke-dashoffset="-96" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#c97b63" stroke-width="16" stroke-dashoffset="-154" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <circle cx="60" cy="60" r="48" fill="none" stroke="#9aa5b1" stroke-width="16" stroke-dashoffset="-188" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            <text x="60" y="56" text-anchor="middle" class="donut-num">${staffUsers.length}</text>
+            <text x="60" y="68" text-anchor="middle" class="donut-label">Staff</text>
+          </svg>
+        </div>
+        <ul class="legend-list">${legendHtml}</ul>
+      </div>
+    </section>
+  `;
+}
+
+function renderUsers() {
+  const filters = ["All", "Active", "Invited", "Suspended"];
+  const q = state.userSearch.toLowerCase();
+  let filtered = state.userFilter === "All" ? staffUsers : staffUsers.filter(u => u.status === state.userFilter);
+  if (q) filtered = filtered.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.location.toLowerCase().includes(q));
+  const stats = [
+    { icon: "users", value: staffUsers.length, label: "Total Staff", accent: true },
+    { icon: "user-check", value: staffUsers.filter(u => u.status === "Active").length, label: "Active" },
+    { icon: "mail", value: staffUsers.filter(u => u.status === "Invited").length, label: "Pending Invites" },
+    { icon: "user-x", value: staffUsers.filter(u => u.status === "Suspended").length, label: "Suspended" }
+  ];
+  const statsHtml = stats.map((s,i) => {
+    const bar = [100, 80, 25, 10][i];
+    return `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${bar}"></div></div>
+    </div>`;
+  }).join("");
+
+  const filterHtml = filters.map(f =>
+    `<button class="btn-outline user-filter-btn ${state.userFilter === f ? "btn-active" : ""}" data-filter="${f}">${f}</button>`
+  ).join("");
+
+  const rows = filtered.map(u =>
+    `<tr>
+      <td><div class="t-name">${u.name}</div><div class="t-sub">${u.email}</div></td>
+      <td>${regionTag(u.location)}</td>
+      <td class="type-col">${u.role}</td>
+      <td><span class="status-badge ${statusColors[u.status]}">${u.status}</span></td>
+      <td class="date-col">${u.lastLogin}</td>
+      <td class="date-col">${u.joined}</td>
+      <td><button class="btn-outline" style="padding:5px 12px;font-size:10.5px" onclick="go404()">Manage</button></td>
+    </tr>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card">
+      <div class="card-header">
+        <div><h2 class="card-title">All Staff</h2><p class="card-sub">Every account across every location</p></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <div class="search-box" style="flex:0 0 auto"><span class="search-icon"><i data-lucide="search"></i></span><input id="user-search-input" placeholder="Search staff…" value="${state.userSearch}"></div>
+          <button class="btn-outline" style="border-color:#c6a15b;color:#e8cf98" onclick="go404()">+ Invite Staff</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">${filterHtml}</div>
+      <div class="table-wrapper"><table class="runs-table"><thead><tr><th>Staff Member</th><th>Location</th><th>Role</th><th>Status</th><th>Last Login</th><th>Joined</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>
+  `;
+}
+
+function renderFacilities() {
+  const stats = [
+    { icon: "building-2", value: locationsData.length, label: "Total Locations", accent: true },
+    { icon: "check-circle-2", value: locationsData.filter(f => f.status === "Online").length, label: "Online" },
+    { icon: "wrench", value: locationsData.filter(f => f.status === "Maintenance").length, label: "Maintenance" },
+    { icon: "power-off", value: locationsData.filter(f => f.status === "Offline").length, label: "Offline" }
+  ];
+  const statsHtml = stats.map((s,i) => {
+    const bar = [100, 83, 17, 17][i];
+    return `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${bar}"></div></div>
+    </div>`;
+  }).join("");
+
+  const cards = locationsData.map(f =>
+    `<div class="team-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="font-weight:700;color:#efece0;font-size:15px">${f.name}</div>
+        <span class="status-badge ${statusColors[f.status]}">${f.status}</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-dim);line-height:1.9">
+        <div>${f.location}</div>
+        <div>Manager: ${f.manager}</div>
+        <div>${f.lines} staff on site · ${f.floor}</div>
+      </div>
+      <div style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:6px"><span>Uptime</span><span>${f.uptime}%</span></div>
+        <div class="progress-bar"><div class="progress-fill" data-w="${f.uptime}" style="background:${f.uptime > 95 ? 'linear-gradient(90deg,#8fae7a,#b7cba9)' : f.uptime > 0 ? 'linear-gradient(90deg,#e3b463,#d9a26c)' : 'linear-gradient(90deg,#c97b63,#e0a18f)'}"></div></div>
+      </div>
+    </div>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card">
+      <div class="card-header"><div><h2 class="card-title">All Locations</h2><p class="card-sub">Status, managers, and staff on site</p></div>
+      <button class="btn-outline" style="border-color:#c6a15b;color:#e8cf98" onclick="go404()">+ Add Location</button></div>
+      <div class="team-grid">${cards}</div>
+    </div>
+  `;
+}
+
+function renderRoles() {
+  const stats = [
+    { icon: "shield-check", value: rolesData.length, label: "Role Types", accent: true },
+    { icon: "users", value: rolesData.reduce((a,r)=>a+r.users,0), label: "Assigned Staff" },
+    { icon: "key", value: Math.max(...rolesData.map(r=>r.permissions)), label: "Max Permissions" },
+    { icon: "crown", value: "1", label: "Super Admins" }
+  ];
+  const statsHtml = stats.map((s,i) => {
+    const bar = [100, 90, 70, 15][i];
+    return `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${bar}"></div></div>
+    </div>`;
+  }).join("");
+
+  const cards = rolesData.map(r =>
+    `<div class="research-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+          <div style="font-weight:700;color:#fff;font-size:14px;margin-bottom:4px">${r.name}</div>
+          <div style="font-size:12.5px;color:var(--text-dim);margin-bottom:6px">${r.description}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0">
+          <span style="background:rgba(198,161,91,0.18);color:#e8cf98;border-radius:999px;padding:3px 10px;font-family:var(--mono);font-size:10.5px;font-weight:700">${r.permissions} perms</span>
+          <span style="font-size:12px;color:var(--text-dim)">${r.users} user${r.users !== 1 ? "s" : ""}</span>
+        </div>
+      </div>
+    </div>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Roles &amp; Permissions</h2><p class="card-sub">Access groups across the console</p></div>
+    <button class="btn-outline" style="border-color:#c6a15b;color:#e8cf98" onclick="go404()">+ New Role</button></div>
+    <div style="display:flex;flex-direction:column;gap:14px">${cards}</div></div>
+  `;
+}
+
+function renderTickets() {
+  const filters = ["All", "Open", "In Progress", "Resolved"];
+  const filtered = state.ticketFilter === "All" ? ticketsData : ticketsData.filter(t => t.status === state.ticketFilter);
+  const stats = [
+    { icon: "life-buoy", value: ticketsData.length, label: "Total Tickets", accent: true },
+    { icon: "inbox", value: ticketsData.filter(t=>t.status==="Open").length, label: "Open" },
+    { icon: "loader", value: ticketsData.filter(t=>t.status==="In Progress").length, label: "In Progress" },
+    { icon: "check-circle-2", value: ticketsData.filter(t=>t.status==="Resolved").length, label: "Resolved" }
+  ];
+  const statsHtml = stats.map((s,i) => {
+    const bar = [100, 50, 33, 33][i];
+    return `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${bar}"></div></div>
+    </div>`;
+  }).join("");
+
+  const filterHtml = filters.map(f =>
+    `<button class="btn-outline ticket-filter-btn ${state.ticketFilter === f ? "btn-active" : ""}" data-filter="${f}">${f}</button>`
+  ).join("");
+
+  const rows = filtered.map(t =>
+    `<tr>
+      <td class="type-col" style="font-family:var(--mono);font-size:11.5px">${t.id}</td>
+      <td><div class="t-name">${t.subject}</div><div class="t-sub">${t.requester}</div></td>
+      <td>${regionTag(t.location)}</td>
+      <td><span class="status-badge" style="background:${priorityColor[t.priority]}22;color:${priorityColor[t.priority]}">${t.priority}</span></td>
+      <td><span class="status-badge ${statusColors[t.status]}">${t.status}</span></td>
+      <td class="date-col">${t.created}</td>
+    </tr>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card">
+      <div class="card-header"><div><h2 class="card-title">Support Tickets</h2><p class="card-sub">Requests from customers &amp; store staff</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${filterHtml}</div></div>
+      <div class="table-wrapper"><table class="runs-table"><thead><tr><th>ID</th><th>Subject</th><th>Location</th><th>Priority</th><th>Status</th><th>Created</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>
+  `;
+}
+
+function renderBilling() {
+  const stats = [
+    { icon: "credit-card", value: "Commerce Plus", label: "Current Plan", accent: true },
+    { icon: "banknote", value: "$2,480", label: "This Month" },
+    { icon: "calendar-clock", value: "Aug 1", label: "Next Renewal" },
+    { icon: "alert-circle", value: invoicesData.filter(i=>i.status==="Overdue").length, label: "Overdue Invoices" }
+  ];
+  const statsHtml = stats.map((s,i) => {
+    const bar = [100, 90, 60, 20][i];
+    return `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value" style="font-size:22px">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${bar}"></div></div>
+    </div>`;
+  }).join("");
+
+  const rows = invoicesData.map(i =>
+    `<tr>
+      <td class="type-col" style="font-family:var(--mono);font-size:11.5px">${i.id}</td>
+      <td class="date-col">${i.period}</td>
+      <td class="type-col">${i.plan}</td>
+      <td class="budget-col">${i.amount}</td>
+      <td><span class="status-badge ${statusColors[i.status]}">${i.status}</span></td>
+      <td class="date-col">${i.date}</td>
+      <td><button class="btn-outline" style="padding:5px 12px;font-size:10.5px" onclick="go404()">Download</button></td>
+    </tr>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card">
+      <div class="card-header"><div><h2 class="card-title">Current Plan</h2><p class="card-sub">Commerce Plus — all locations, unlimited staff seats</p></div>
+      <button class="btn-outline" style="border-color:#c6a15b;color:#e8cf98" onclick="go404()">Change Plan</button></div>
+      <div style="font-size:13px;color:var(--text-dim);line-height:1.8">
+        Includes all 6 locations, unlimited staff seats, priority support, and full audit log retention.
+        Billed monthly based on active orders and platform usage.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><h2 class="card-title">Invoice History</h2><p class="card-sub">Last 4 billing periods</p></div></div>
+      <div class="table-wrapper"><table class="runs-table"><thead><tr><th>Invoice</th><th>Period</th><th>Plan</th><th>Amount</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>
+  `;
+}
+
+function renderAudit() {
+  const rows = auditLog.map(a =>
+    `<div class="schedule-row">
+      <div style="width:78px;flex-shrink:0;font-family:var(--mono);font-size:11px;color:var(--text-dimmer)">${a.time}</div>
+      <div style="width:3px;align-self:stretch;border-radius:999px;background:#c6a15b;opacity:0.6;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;color:#efece0;font-size:13.5px">${a.action}</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:3px">${a.user} · ${a.target}${a.ip !== "—" ? " · " + a.ip : ""}</div>
+      </div>
+    </div>`
+  ).join("");
+
+  return `<div class="card"><div class="card-header"><div><h2 class="card-title">Audit Log</h2><p class="card-sub">Account, permission, and system events</p></div>
+    <button class="btn-outline" onclick="go404()">Export CSV</button></div>
+    <div style="display:flex;flex-direction:column;gap:4px">${rows}</div></div>`;
+}
+
+function renderSystem() {
+  const okCount = systemServices.filter(s=>s.status==="ok").length;
+  const stats = [
+    { icon: "activity", value: systemServices.length, label: "Services Monitored", accent: true },
+    { icon: "check-circle-2", value: okCount, label: "Operational" },
+    { icon: "alert-triangle", value: systemServices.filter(s=>s.status==="warn").length, label: "Degraded" },
+    { icon: "octagon-x", value: systemServices.filter(s=>s.status==="down").length, label: "Down" }
+  ];
+  const statsHtml = stats.map((s,i) => {
+    const bar = [100, Math.round(okCount/systemServices.length*100), 20, 20][i];
+    return `<div class="stat-card ${s.accent ? "stat-accent" : ""}">
+      <div class="stat-top"><span class="stat-icon"><i data-lucide="${s.icon}"></i></span></div>
+      <div class="stat-value">${s.value}</div><div class="stat-label">${s.label}</div>
+      <div class="stat-bar"><div class="stat-bar-fill" data-w="${bar}"></div></div>
+    </div>`;
+  }).join("");
+
+  const rows = systemServices.map(s =>
+    `<div class="service-row">
+      <div class="service-dot ${s.status}"></div>
+      <div class="service-info">
+        <div class="service-name">${s.name}</div>
+        <div class="service-meta">Uptime ${s.uptime} · Latency ${s.latency}</div>
+      </div>
+      <span class="status-badge ${s.status === 'ok' ? 'status-active' : s.status === 'warn' ? 'status-field' : 'status-danger'}">${s.status === 'ok' ? 'Operational' : s.status === 'warn' ? 'Degraded' : 'Down'}</span>
+    </div>`
+  ).join("");
+
+  return `
+    <section class="stats-grid">${statsHtml}</section>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Service Status</h2><p class="card-sub">Live monitoring across core storefront systems</p></div></div>
+    <div style="display:flex;flex-direction:column;gap:4px">${rows}</div></div>
+  `;
+}
+
+function toggleHtml(id, value) {
+  return `<div class="toggle-switch" data-toggle="${id}" style="background:${value ? "#c6a15b" : "rgba(242,237,227,0.14)"}">
+    <div class="toggle-knob" style="left:${value ? "20px" : "3px"}"></div></div>`;
+}
+
+function renderSettings() {
+  const s = state.settings;
+  const displayName = currentUsername || currentEmail || "Signed out";
+  const displayEmail = currentEmail || "No account signed in";
+  return `
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Admin Account</h2><p class="card-sub">Signed-in profile for this console</p></div></div>
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:20px;flex-wrap:wrap">
+        <div style="width:64px;height:64px;border-radius:50%;border:2px solid rgba(198,161,91,0.4);background:var(--accent-soft);color:var(--accent-2);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:24px;text-transform:uppercase;flex-shrink:0">${currentInitial}</div>
+        <div><div style="font-weight:700;color:#efece0;font-size:16px;text-transform:capitalize">${displayName}</div>
+        <div style="font-size:13px;color:var(--text-dim);margin-top:2px">${displayEmail}</div>
+        <div style="font-family:var(--mono);font-size:12px;color:#e8cf98;margin-top:4px">${currentUser ? 'Stackly staff account' : 'Not signed in'}</div></div>
+      </div>
+      <button class="btn-outline" style="border-color:#c6a15b;color:#e8cf98" onclick="go404()">Edit Profile</button>
+    </div>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Preferences</h2><p class="card-sub">Notifications and display</p></div></div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(242,237,227,0.06)">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Push Notifications</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">Alerts for tickets, incidents, and account changes</div></div>
+          ${toggleHtml("notifications", s.notifications)}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(242,237,227,0.06)">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Weekly Digest</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">Summary of platform activity every Monday</div></div>
+          ${toggleHtml("emailDigest", s.emailDigest)}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(242,237,227,0.06)">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Dark Mode</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">Use dark colour scheme across the console</div></div>
+          ${toggleHtml("darkMode", s.darkMode)}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:18px">
+          <div><div style="font-weight:700;color:#efece0;font-size:13.5px">Language</div><div style="font-size:12.5px;color:var(--text-dim);margin-top:2px">Interface display language</div></div>
+          <select class="pref-select" id="lang-select">${["English", "French", "Spanish", "Mandarin", "Portuguese"].map(l => `<option ${s.language === l ? "selected" : ""}>${l}</option>`).join("")}</select>
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Session</h2><p class="card-sub">Sign out of this account on this device</p></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+        <div style="font-size:12.5px;color:var(--text-dim)">Signed in as <strong style="color:#efece0">${displayEmail}</strong>. Logging out will clear this session and return you to the sign-in screen.</div>
+        <button class="btn-outline" style="border-color:rgba(201,123,99,0.4);color:#f0bdae;flex-shrink:0" id="settings-logout-btn">Logout</button>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><div><h2 class="card-title">Danger Zone</h2><p class="card-sub">Platform-wide irreversible actions</p></div></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button class="btn-outline" style="border-color:rgba(201,123,99,0.4);color:#f0bdae" onclick="go404()">Reset Admin Password</button>
+        <button class="btn-outline" style="border-color:rgba(201,123,99,0.4);color:#f0bdae" onclick="go404()">Revoke All Sessions</button>
+      </div>
+    </div>
+  `;
+}
+
+const pageRenderers = {
+  dashboard: renderDashboard,
+  users: renderUsers,
+  facilities: renderFacilities,
+  roles: renderRoles,
+  tickets: renderTickets,
+  billing: renderBilling,
+  audit: renderAudit,
+  system: renderSystem,
+  settings: renderSettings
+};
+
+function renderNav() {
+  const mainItems = navItems.slice(0, 6);
+  const mgmtItems = navItems.slice(6);
+  function itemHtml(item) {
+    let badge = "";
+    if (item.id === "tickets") badge = `<span class="nav-badge">${ticketsData.filter(t=>t.status!=="Resolved").length}</span>`;
+    if (item.id === "system") badge = `<span class="nav-badge warn">1</span>`;
+    return `<button class="nav-item ${state.activeNav === item.id ? "nav-active" : ""}" data-nav="${item.id}">
+      <span class="nav-icon"><i data-lucide="${item.icon}"></i></span><span>${item.label}</span>${badge}</button>`;
+  }
+  document.getElementById("nav-main").innerHTML = mainItems.map(itemHtml).join("");
+  document.getElementById("nav-management").innerHTML = mgmtItems.map(itemHtml).join("");
+}
+
+function renderPage() {
+  const page = pageMap[state.activeNav];
+  document.getElementById("page-title-text").textContent = page.title;
+  document.getElementById("page-sub-text").textContent = page.sub;
+  document.getElementById("content-area").innerHTML = pageRenderers[state.activeNav]();
+  renderNav();
+  const settingsLogoutBtn = document.getElementById("settings-logout-btn");
+  if (settingsLogoutBtn) settingsLogoutBtn.addEventListener("click", logout);
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  animateStatBars();
+  if (window.lucide) lucide.createIcons();
+}
+
+function navigateTo(id) {
+  state.activeNav = id;
+  closeSidebar();
+  closeTopbarUserMenu();
+  renderPage();
+}
+
+function openSidebar() {
+  document.getElementById("sidebar").classList.add("sidebar-open");
+  document.getElementById("sidebar-overlay").classList.add("show");
+}
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("sidebar-open");
+  document.getElementById("sidebar-overlay").classList.remove("show");
+}
+function closeTopbarUserMenu() {
+  document.getElementById("topbar-user").classList.remove("open");
+}
+
+document.getElementById("hamburger-btn").addEventListener("click", openSidebar);
+document.getElementById("close-sidebar-btn").addEventListener("click", closeSidebar);
+document.getElementById("sidebar-overlay").addEventListener("click", closeSidebar);
+document.getElementById("notif-btn").addEventListener("click", go404);
+document.getElementById("logout-btn").addEventListener("click", logout);
+document.getElementById("topbar-logout-btn").addEventListener("click", logout);
+document.getElementById("topbar-user-btn").addEventListener("click", function(e) {
+  e.stopPropagation();
+  document.getElementById("topbar-user").classList.toggle("open");
+});
+document.addEventListener("click", closeTopbarUserMenu);
+
+document.addEventListener("click", function(e) {
+  const navBtn = e.target.closest("[data-nav]");
+  if (navBtn) { navigateTo(navBtn.getAttribute("data-nav")); return; }
+  const userFilterBtn = e.target.closest(".user-filter-btn");
+  if (userFilterBtn) { state.userFilter = userFilterBtn.getAttribute("data-filter"); renderPage(); return; }
+  const ticketFilterBtn = e.target.closest(".ticket-filter-btn");
+  if (ticketFilterBtn) { state.ticketFilter = ticketFilterBtn.getAttribute("data-filter"); renderPage(); return; }
+  const toggle = e.target.closest("[data-toggle]");
+  if (toggle) {
+    const key = toggle.getAttribute("data-toggle");
+    state.settings[key] = !state.settings[key];
+    renderPage();
+    return;
+  }
+});
+
+document.addEventListener("input", function(e) {
+  if (e.target && e.target.id === "user-search-input") {
+    state.userSearch = e.target.value;
+    const caretPos = e.target.selectionStart;
+    renderPage();
+    const input = document.getElementById("user-search-input");
+    if (input) { input.focus(); input.setSelectionRange(caretPos, caretPos); }
+  }
+});
+
+document.addEventListener("change", function(e) {
+  if (e.target && e.target.id === "lang-select") {
+    state.settings.language = e.target.value;
+  }
+});
+
+paintUserChrome();
+renderPage();
+if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>
