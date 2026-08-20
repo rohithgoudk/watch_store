@@ -6,6 +6,9 @@
 <title>Stackly — Fine Timepieces</title>
 <meta name="description" content="Stackly — Swiss-movement watches, hand-cased and finished in Columbus, Ohio since 1998.">
 <link rel="stylesheet" href="../css/index.css">
+<!-- GSAP (hero animation only) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body class="hero-page">
 
@@ -84,8 +87,9 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="home">
-  <div class="hero-bg" style="background-image:url('../assets/in1.webp');"></div>
-  <svg class="hero-dial" viewBox="0 0 400 400" fill="none">
+  <div class="hero-bg" data-hero-bg style="background-image:url('../assets/in1.webp');"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <svg class="hero-dial" data-hero-dial viewBox="0 0 400 400" fill="none">
     <circle cx="200" cy="200" r="180" stroke="#c6a15b" stroke-width="0.6"/>
     <circle cx="200" cy="200" r="150" stroke="#c6a15b" stroke-width="0.6"/>
     <line x1="200" y1="200" x2="200" y2="80" stroke="#e8cf98" stroke-width="1.4"/>
@@ -95,21 +99,25 @@
 
   <div class="wrap hero-inner">
     <div class="hero-content">
-      <span class="eyebrow">Swiss Movement · Est. 1998</span>
-      <h1>Time,<em>worn well.</em></h1>
-      <p class="hero-sub">Swiss-movement watches, cased and finished by hand in our Columbus atelier. Built to be wound, worn, and passed down.</p>
-      <div class="hero-cta-row">
+      <span class="eyebrow hero-anim" data-hero-anim="eyebrow">Swiss Movement · Est. 1998</span>
+      <h1 class="hero-anim" data-hero-anim="title">
+        <span class="hero-line-mask hero-line-mask--top"><span class="hero-line-inner">Time,</span></span>
+        <em class="hero-line-mask"><span class="hero-line-inner">worn well.</span></em>
+      </h1>
+      <p class="hero-sub hero-anim" data-hero-anim="sub">Swiss-movement watches, cased and finished by hand in our Columbus atelier. Built to be wound, worn, and passed down.</p>
+      <div class="hero-cta-row" data-hero-anim="cta">
         <a href="404.html" class="btn btn-brass">Shop Collections</a>
         <a href="404.html" class="btn btn-line-ink">Our Story</a>
       </div>
-      <div class="hero-meta">
+      <div class="hero-meta" data-hero-anim="meta">
         <div><strong>1998</strong><span>Est. In Columbus, OH</span></div>
-        <div><strong>26</strong><span>Watchmaking Awards</span></div>
-        <div><strong>40,000+</strong><span>Timepieces Delivered</span></div>
+        <div><strong data-count="26" data-suffix="">26</strong><span>Watchmaking Awards</span></div>
+        <div><strong data-count="40000" data-suffix="+">40,000+</strong><span>Timepieces Delivered</span></div>
       </div>
     </div>
   </div>
 
+  
 </section>
 
 <!-- ============ MARQUEE ============ -->
@@ -718,6 +726,145 @@
   })();
 
 
+</script>
+
+<!-- =========================================================
+     HERO — GSAP animation (scoped to .hero only)
+     Entrance timeline, ambient dial rotation + glow, count-up
+     stats, and — on non-touch desktop only — a scroll-linked
+     parallax + subtle pointer parallax. Fully skipped when the
+     visitor has prefers-reduced-motion, or if GSAP fails to
+     load (the hero simply renders in its normal static state).
+     ========================================================= -->
+<script>
+(function () {
+  if (typeof gsap === 'undefined') return;
+  if (typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ ignoreMobileResize: true });
+  }
+
+  var heroSection = document.querySelector('.hero');
+  if (!heroSection) return;
+
+  var heroBg    = heroSection.querySelector('[data-hero-bg]');
+  var heroGlow  = heroSection.querySelector('.hero-glow');
+  var heroDial  = heroSection.querySelector('[data-hero-dial]');
+  var lines     = heroSection.querySelectorAll('.hero-line-inner');
+  var eyebrow   = heroSection.querySelector('[data-hero-anim="eyebrow"]');
+  var sub       = heroSection.querySelector('[data-hero-anim="sub"]');
+  var ctaRow    = heroSection.querySelector('[data-hero-anim="cta"]');
+  var ctaBtns   = ctaRow ? ctaRow.querySelectorAll('.btn') : [];
+  var metaRow   = heroSection.querySelector('[data-hero-anim="meta"]');
+  var metaItems = metaRow ? metaRow.children : [];
+  var counters  = heroSection.querySelectorAll('[data-count]');
+  var cue       = heroSection.querySelector('[data-hero-anim="cue"]');
+  var content   = heroSection.querySelector('.hero-content');
+
+  gsap.matchMedia().add(
+    {
+      reduceMotion: '(prefers-reduced-motion: reduce)',
+      isDesktop: '(min-width: 901px) and (pointer: fine) and (hover: hover)'
+    },
+    function (context) {
+      var reduceMotion = context.conditions.reduceMotion;
+      var isDesktop = context.conditions.isDesktop;
+      var cleanup = [];
+
+      /* Reduced motion: leave everything in its natural, fully
+         visible CSS state — no entrance, no parallax, no spin
+         override (the global reduced-motion CSS already freezes
+         the CSS keyframe spin). */
+      if (reduceMotion) return;
+
+      /* ---- Entrance sequence ---- */
+      var tl = gsap.timeline({ defaults: { ease: 'power3.out' }, delay: 0.15 });
+
+      gsap.set(heroBg, { scale: 1.14, transformOrigin: '50% 50%' });
+      gsap.set(lines, { yPercent: 115 });
+      gsap.set([eyebrow, sub], { autoAlpha: 0, y: 18 });
+      gsap.set(ctaBtns, { autoAlpha: 0, y: 16 });
+      gsap.set(metaItems, { autoAlpha: 0, y: 14 });
+      gsap.set(heroDial, { autoAlpha: 0, scale: 0.94, rotate: -6, transformOrigin: '50% 50%' });
+      gsap.set(cue, { autoAlpha: 0, y: -8 });
+
+      tl.to(heroBg, { scale: 1, duration: 2.6, ease: 'power2.out' }, 0)
+        .to(heroDial, { autoAlpha: 0.22, scale: 1, rotate: 0, duration: 1.6 }, 0.1)
+        .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.7 }, 0.25)
+        .to(lines, { yPercent: 0, duration: 0.9, stagger: 0.12, ease: 'power4.out' }, 0.4)
+        .to(sub, { autoAlpha: 1, y: 0, duration: 0.7 }, 0.7)
+        .to(ctaBtns, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.1 }, 0.85)
+        .to(metaItems, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, 1.0)
+        .to(cue, { autoAlpha: 1, y: 0, duration: 0.6 }, 1.2)
+        /* hand off continuous rotation to GSAP so it composites
+           cleanly with any later transforms on the dial */
+        .add(function () { heroSection.classList.add('js-gsap-dial'); }, 1.6)
+        .to(heroDial, { rotate: '+=360', duration: 140, ease: 'none', repeat: -1 }, 1.6);
+
+      /* ---- Count-up stats ---- */
+      counters.forEach(function (el) {
+        var target = parseFloat(el.getAttribute('data-count'));
+        if (isNaN(target)) return;
+        var suffix = el.getAttribute('data-suffix') || '';
+        var proxy = { val: 0 };
+        gsap.to(proxy, {
+          val: target,
+          duration: 1.6,
+          ease: 'power2.out',
+          delay: 1.05,
+          onUpdate: function () {
+            el.textContent = Math.round(proxy.val).toLocaleString('en-US') + suffix;
+          },
+          onComplete: function () {
+            el.textContent = target.toLocaleString('en-US') + suffix;
+          }
+        });
+      });
+
+      /* ---- Ambient glow breathing on the background ---- */
+      if (heroGlow) {
+        gsap.fromTo(heroGlow,
+          { opacity: 0.45 },
+          { opacity: 0.85, duration: 5, ease: 'sine.inOut', yoyo: true, repeat: -1 }
+        );
+      }
+
+      /* ---- Desktop-only: scroll parallax + pointer parallax ---- */
+      if (isDesktop && typeof ScrollTrigger !== 'undefined') {
+        var parallaxTween = gsap.timeline({
+          scrollTrigger: {
+            trigger: heroSection,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.6
+          }
+        });
+        parallaxTween
+          .to(heroBg, { yPercent: 14, ease: 'none' }, 0)
+          .to(heroDial, { yPercent: -18, ease: 'none' }, 0)
+          .to(content, { yPercent: -12, autoAlpha: 0.35, ease: 'none' }, 0);
+
+        cleanup.push(function () { parallaxTween.scrollTrigger && parallaxTween.scrollTrigger.kill(); parallaxTween.kill(); });
+
+        var xTo = gsap.quickTo(heroDial, 'x', { duration: 0.9, ease: 'power3.out' });
+        var yTo = gsap.quickTo(heroDial, 'y', { duration: 0.9, ease: 'power3.out' });
+        var onMove = function (e) {
+          var rect = heroSection.getBoundingClientRect();
+          var relX = ((e.clientX - rect.left) / rect.width - 0.5) * 30;
+          var relY = ((e.clientY - rect.top) / rect.height - 0.5) * 30;
+          xTo(relX);
+          yTo(relY);
+        };
+        heroSection.addEventListener('mousemove', onMove);
+        cleanup.push(function () { heroSection.removeEventListener('mousemove', onMove); });
+      }
+
+      return function () {
+        cleanup.forEach(function (fn) { fn(); });
+      };
+    }
+  );
+})();
 </script>
 </body>
 </html>

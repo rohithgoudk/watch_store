@@ -46,38 +46,25 @@
   </div>
 </header>
 
-<!-- ============ AUTH / SIGN UP ============ -->
+<!-- ============ AUTH / SIGN UP — single centered column ============ -->
 <main>
   <section class="auth-section">
     <div class="auth-bg"></div>
+
+    <!-- Dial is now a centered, symmetric watermark behind the whole
+         column instead of a half-cropped shape pinned to the left edge
+         — it sits behind the copy and the card without cutting through
+         either. -->
     <svg class="auth-dial" viewBox="0 0 400 400" fill="none" aria-hidden="true">
-      <circle cx="200" cy="200" r="180" stroke="#B8935A" stroke-width="0.6" opacity="0.5"/>
-      <circle cx="200" cy="200" r="150" stroke="#B8935A" stroke-width="0.6" opacity="0.5"/>
-      <circle cx="200" cy="200" r="120" stroke="#E3C68A" stroke-width="0.4" opacity="0.35"/>
-      <line x1="200" y1="200" x2="200" y2="80" stroke="#E3C68A" stroke-width="1.4"/>
-      <line x1="200" y1="200" x2="260" y2="230" stroke="#B8935A" stroke-width="1.2"/>
-      <circle cx="200" cy="200" r="4" fill="#E3C68A"/>
+      <circle cx="200" cy="200" r="180" stroke="#B8935A" stroke-width="0.6" opacity="0.4"/>
+      <circle cx="200" cy="200" r="150" stroke="#B8935A" stroke-width="0.6" opacity="0.4"/>
+      <circle cx="200" cy="200" r="120" stroke="#E3C68A" stroke-width="0.4" opacity="0.28"/>
+      <line x1="200" y1="200" x2="200" y2="80" stroke="#E3C68A" stroke-width="1.4" opacity="0.5"/>
+      <line x1="200" y1="200" x2="260" y2="230" stroke="#B8935A" stroke-width="1.2" opacity="0.5"/>
+      <circle cx="200" cy="200" r="4" fill="#E3C68A" opacity="0.5"/>
     </svg>
 
     <div class="wrap auth-grid">
-
-      <div class="auth-intro">
-        <span class="eyebrow">Join Stackly · Member Access</span>
-        <h1 class="reveal-up">Every watch,<br><em>worth remembering.</em></h1>
-        <p class="auth-lead reveal-up">Create your account for early access to limited releases, saved orders, free engraving requests, and a direct line to our Columbus atelier.</p>
-
-        <ul class="auth-perks">
-          <li class="reveal-up"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Early access to limited-run pieces</li>
-          <li class="reveal-up"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Free engraving on every order</li>
-          <li class="reveal-up"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Warranty registration and service history</li>
-        </ul>
-
-        <div class="auth-stats reveal-up">
-          <div class="stat-pill"><strong>1998</strong><span>Est. In Columbus, OH</span></div>
-          <div class="stat-pill"><strong>26</strong><span>Watchmaking Awards</span></div>
-          <div class="stat-pill"><strong>40,000+</strong><span>Timepieces Delivered</span></div>
-        </div>
-      </div>
 
       <div class="auth-card-wrap">
         <form class="auth-card" id="signupForm" novalidate>

@@ -148,83 +148,59 @@
   .hamburger { display:none !important; }
   
   /* =============================================================
-     AUTH / SIGN UP
+     AUTH / SIGN UP — single centered column
+     Previously a 1fr / 460px split grid with the intro copy
+     pinned left and the dial artwork cropped against the left
+     edge, which made the dial's rings and hand read as a stray
+     line cutting through the headline. Now everything (eyebrow,
+     heading, perks, stats, and the card) stacks in one centered
+     column, and the dial is a full, symmetric watermark centered
+     behind that column instead of a half-shape pinned to one side.
   ============================================================= */
   main { display:block; }
   .auth-section {
     position:relative;
     overflow:hidden;
     background:var(--ink);
-    padding:calc(var(--header-h) + 40px) 0 100px;
+    padding:calc(var(--header-h) + 56px) 0 100px;
     min-height:100vh;
     display:flex;
     align-items:center;
+    justify-content:center;
   }
   .auth-bg {
     position:absolute; inset:0;
     background:
-      radial-gradient(80% 55% at 100% 0%, rgba(184,147,90,.18), transparent 60%),
-      radial-gradient(65% 50% at 0% 100%, rgba(184,147,90,.10), transparent 60%),
+      radial-gradient(70% 55% at 50% 30%, rgba(184,147,90,.16), transparent 62%),
       linear-gradient(180deg, var(--ink) 0%, var(--ink-3) 100%);
   }
   .auth-dial {
-    position:absolute; top:50%; left:-14%;
-    width:56%; max-width:560px;
-    transform:translateY(-50%);
-    opacity:.9;
+    position:absolute; top:50%; left:50%;
+    width:min(64vw, 760px);
+    transform:translate(-50%,-50%);
+    opacity:.55;
     pointer-events:none;
+    z-index:1;
   }
   
   .auth-grid {
     position:relative; z-index:2;
-    display:grid;
-    grid-template-columns:1fr 460px;
-    gap:64px;
+    display:flex;
+    flex-direction:column;
     align-items:center;
+    text-align:center;
+    max-width:640px;
+    margin:0 auto;
   }
   
-  .auth-intro h1 {
-    font-family:var(--font-display);
-    font-size:clamp(32px, 3.6vw, 48px);
-    line-height:1.1;
-    font-weight:500;
-    margin:16px 0 18px;
-    letter-spacing:-.01em;
-    color:var(--text-on-ink);
-  }
-  .auth-intro h1 em { font-style:italic; color:var(--brass-2); }
-  .auth-lead {
-    font-size:16px; line-height:1.65;
-    color:var(--text-on-ink-muted);
-    max-width:440px;
-    margin:0 0 28px;
-  }
-  .auth-perks { display:flex; flex-direction:column; gap:12px; margin-bottom:34px; }
-  .auth-perks li {
-    display:flex; align-items:center; gap:12px;
-    font-size:14px; color:var(--text-on-ink);
-  }
-  .auth-perks svg {
-    width:19px; height:19px; flex:none;
-    color:#1B1405; background:var(--brass-2);
-    border-radius:50%; padding:3px;
-  }
-  .auth-stats { display:flex; flex-wrap:wrap; gap:10px; }
-  .stat-pill {
-    display:flex; align-items:baseline; gap:6px;
-    border:1px solid var(--line-on-ink);
-    border-radius:999px; padding:9px 16px; font-size:13px;
-  }
-  .stat-pill strong { font-family:var(--font-mono); color:var(--brass-2); font-size:14px; }
-  .stat-pill span { color:var(--text-on-ink-muted); }
-  
-  .auth-card-wrap { position:relative; }
+  .auth-card-wrap { position:relative; width:100%; max-width:460px; margin:0 auto; }
   .auth-card {
     background:rgba(245,241,232,.98);
     border:1px solid rgba(255,255,255,.5);
     border-radius:var(--radius-m);
     padding:38px 34px 30px;
     box-shadow:0 40px 80px -30px rgba(0,0,0,.55);
+    text-align:left;
   }
   .auth-card-head { margin-bottom:22px; }
   .auth-card-head h2 {
@@ -355,9 +331,7 @@
      Responsive
   ============================================================= */
   @media (max-width:1080px) {
-    .auth-grid { grid-template-columns:1fr; gap:52px; }
-    .auth-card-wrap { max-width:460px; margin:0 auto; }
-    .auth-dial { width:70%; opacity:.5; }
+    .auth-dial { width:min(80vw, 640px); opacity:.45; }
   }
   
   @media (max-width:900px) {
@@ -370,7 +344,6 @@
     .auth-section { padding:calc(var(--header-h) + 24px) 0 60px; min-height:auto; }
     .auth-card { padding:30px 22px 24px; border-radius:14px; }
     .field-row { grid-template-columns:1fr; gap:0; }
-    .auth-intro h1 { font-size:clamp(28px,7vw,38px); }
     .wrap { padding:0 20px; }
   }
   

@@ -93,20 +93,20 @@ const orders = [
 ];
 
 const wishlist = [
-  { name: "Titanium Field 44mm", sub: "The Field · $690", avatar: "TF", status: "instock", added: 2, note: "Coming soon — you'll be notified first", sku: "STK-TF44" },
-  { name: "Rose Gold Heritage 38mm", sub: "The Heritage · $760", avatar: "RG", status: "lowstock", added: 5, note: "Only 3 left in this size", sku: "STK-RG38" },
-  { name: "Atelier Chronograph", sub: "The Atelier · $2,890", avatar: "AC", status: "instock", added: 9, note: "Ships within 3 business days", sku: "STK-CHR01" },
-  { name: "Basalt Field Auto — Black", sub: "The Field · $560", avatar: "BF", status: "soldout", added: 14, note: "Notify me when restocked", sku: "STK-BF41B" },
-  { name: "Linden Ivory 34mm", sub: "The Minima · $440", avatar: "LI", status: "instock", added: 21, note: "Ships within 3 business days", sku: "STK-LI34" }
+  { name: "Titanium Field 44mm", sub: "The Field · $690", avatar: "TF", status: "instock", added: 2, note: "Coming soon — you'll be notified first", sku: "STK-TF44", img: "../assets/w1.webp" },
+  { name: "Rose Gold Heritage 38mm", sub: "The Heritage · $760", avatar: "RG", status: "lowstock", added: 5, note: "Only 3 left in this size", sku: "STK-RG38", img: "../assets/w2.webp" },
+  { name: "Atelier Chronograph", sub: "The Atelier · $2,890", avatar: "AC", status: "instock", added: 9, note: "Ships within 3 business days", sku: "STK-CHR01", img: "../assets/w3.webp" },
+  { name: "Basalt Field Auto — Black", sub: "The Field · $560", avatar: "BF", status: "soldout", added: 14, note: "Notify me when restocked", sku: "STK-BF41B", img: "../assets/w4.webp" },
+  { name: "Linden Ivory 34mm", sub: "The Minima · $440", avatar: "LI", status: "instock", added: 21, note: "Ships within 3 business days", sku: "STK-LI34", img: "../assets/w5.webp" }
 ];
 
 const myCollection = [
-  { id: "STK-00142", name: "Oakhurst Steel 40mm", collection: "The Heritage", category: "Dress", date: "May 2026", condition: "Excellent", status: "Under Warranty" },
-  { id: "STK-00098", name: "Solene Gold 36mm", collection: "The Atelier", category: "Limited", date: "Mar 2026", condition: "Excellent", status: "Under Warranty" },
-  { id: "STK-00071", name: "Cassian Onyx 36mm", collection: "The Atelier", category: "Limited", date: "Jan 2026", condition: "Good", status: "Under Warranty" },
-  { id: "STK-00033", name: "Basalt Field Auto", collection: "The Field", category: "Field", date: "Nov 2025", condition: "Needs Service", status: "Service Due" },
-  { id: "STK-00019", name: "Reed Slate 34mm", collection: "The Minima", category: "Minimal", date: "Jun 2025", condition: "Good", status: "Under Warranty" },
-  { id: "STK-00004", name: "Hollis Two-Tone 38mm", collection: "The Heritage", category: "Dress", date: "Feb 2023", condition: "Good", status: "Out of Warranty" }
+  { id: "STK-00142", name: "Oakhurst Steel 40mm", collection: "The Heritage", category: "Dress", date: "May 2026", condition: "Excellent", status: "Under Warranty", img: "../assets/da1.webp" },
+  { id: "STK-00098", name: "Solene Gold 36mm", collection: "The Atelier", category: "Limited", date: "Mar 2026", condition: "Excellent", status: "Under Warranty", img: "../assets/da2.webp" },
+  { id: "STK-00071", name: "Cassian Onyx 36mm", collection: "The Atelier", category: "Limited", date: "Jan 2026", condition: "Good", status: "Under Warranty", img: "../assets/da3.webp" },
+  { id: "STK-00033", name: "Basalt Field Auto", collection: "The Field", category: "Field", date: "Nov 2025", condition: "Needs Service", status: "Service Due", img: "../assets/da4.webp" },
+  { id: "STK-00019", name: "Reed Slate 34mm", collection: "The Minima", category: "Minimal", date: "Jun 2025", condition: "Good", status: "Under Warranty", img: "../assets/da5.webp" },
+  { id: "STK-00004", name: "Hollis Two-Tone 38mm", collection: "The Heritage", category: "Dress", date: "Feb 2023", condition: "Good", status: "Out of Warranty", img: "../assets/da6.webp" }
 ];
 
 const serviceHistory = [
@@ -152,6 +152,15 @@ const activityFeed = [
   { text: "Titanium Field 44mm restocked — saved in your Wishlist", time: "2d ago", type: "update" },
   { text: "You reached Gold loyalty tier", time: "3d ago", type: "milestone" },
   { text: "New care guide added for The Atelier collection", time: "4d ago", type: "update" }
+];
+
+const dashboardGallery = [
+  { title: "The Heritage", sub: "Dress watches", img: "../assets/d1.webp", accent: collectionAccents["The Heritage"] },
+  { title: "The Field", sub: "Built for the outdoors", img: "../assets/d2.webp", accent: collectionAccents["The Field"] },
+  { title: "The Atelier", sub: "Limited editions", img: "../assets/d3.webp", accent: collectionAccents["The Atelier"] },
+  { title: "The Minima", sub: "Minimalist everyday", img: "../assets/d4.webp", accent: collectionAccents["The Minima"] },
+  { title: "New Arrivals", sub: "Just landed this month", img: "../assets/d5.webp", accent: "#f2d19b" },
+  { title: "The Atelier — Columbus", sub: "Visit our flagship atelier", img: "../assets/d6.webp", accent: "#c6a15b" }
 ];
 
 const navIcons = {
@@ -239,6 +248,10 @@ function regionTag(collection) {
   return `<span class="region-tag" style="color:${c};border-color:${c};background:${c}22;">${collection}</span>`;
 }
 
+function imgFallback(label) {
+  return `this.onerror=null;this.style.display='none';this.parentElement.classList.add('img-fallback-active');this.nextElementSibling&&(this.nextElementSibling.style.display='flex');`;
+}
+
 function animateStatBars(){
   requestAnimationFrame(() => {
     document.querySelectorAll('.stat-bar-fill, .progress-fill').forEach(el => {
@@ -287,7 +300,11 @@ function renderDashboard() {
 
   const wishHtml = wishlist.slice(0, 5).map(m =>
     `<li class="team-item">
-      <div class="member-avatar">${m.avatar}<span class="online-dot dot-${m.status}"></span></div>
+      <div class="member-avatar member-avatar-img">
+        <img src="${m.img}" alt="${m.name}" loading="lazy" onerror="${imgFallback(m.avatar)}">
+        <span class="avatar-fallback-text">${m.avatar}</span>
+        <span class="online-dot dot-${m.status}"></span>
+      </div>
       <div class="member-info"><div class="member-name">${m.name}</div><div class="member-role">${m.sub}</div></div>
       <div class="member-projects"><span class="proj-count">${m.added}</span><span class="proj-label">days</span></div>
     </li>`
@@ -325,8 +342,20 @@ function renderDashboard() {
     </li>`
   ).join("");
 
+  const galleryHtml = dashboardGallery.map(g =>
+    `<figure class="gallery-tile" style="--tile-accent:${g.accent}">
+      <img src="${g.img}" alt="${g.title}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.classList.add('img-fallback-active');">
+      <div class="gallery-fallback-icon"><i data-lucide="watch"></i></div>
+      <figcaption><span class="gallery-title">${g.title}</span><span class="gallery-sub">${g.sub}</span></figcaption>
+    </figure>`
+  ).join("");
+
   return `
     <section class="stats-grid">${statsHtml}</section>
+    <section class="card">
+      <div class="card-header"><div><h2 class="card-title">Collection Highlights</h2><p class="card-sub">A closer look at what Stackly offers</p></div></div>
+      <div class="gallery-grid">${galleryHtml}</div>
+    </section>
     <section class="mid-grid">
       <div class="card">
         <div class="card-header"><div><h2 class="card-title">Recent Orders</h2><p class="card-sub">Your latest purchases and their status</p></div></div>
@@ -429,8 +458,12 @@ function renderWishlist() {
 
   const cards = wishlist.map(m =>
     `<div class="team-card">
+      <div class="wish-photo">
+        <img src="${m.img}" alt="${m.name}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.classList.add('img-fallback-active');">
+        <span class="wish-photo-fallback"><i data-lucide="watch"></i></span>
+        <span class="online-dot dot-${m.status} wish-photo-dot"></span>
+      </div>
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
-        <div class="member-avatar" style="width:46px;height:46px;font-size:14px">${m.avatar}<span class="online-dot dot-${m.status}"></span></div>
         <div><div class="member-name" style="font-size:15px">${m.name}</div><div class="member-role">${m.sub}</div></div>
       </div>
       <div style="font-size:12.5px;color:var(--text-dim);line-height:1.9">
@@ -474,6 +507,12 @@ function renderCollection() {
 
   const rows = filtered.map(a =>
     `<tr>
+      <td>
+        <div class="coll-thumb">
+          <img src="${a.img}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentElement.classList.add('img-fallback-active');">
+          <span class="coll-thumb-fallback"><i data-lucide="watch"></i></span>
+        </div>
+      </td>
       <td class="type-col" style="font-size:11.5px;font-family:var(--mono)">${a.id}</td>
       <td><div class="t-name">${a.name}</div><div class="t-sub">${a.collection}</div></td>
       <td class="date-col">${a.category}</td>
@@ -488,7 +527,7 @@ function renderCollection() {
     <div class="card">
       <div class="card-header"><div><h2 class="card-title">My Collection</h2><p class="card-sub">Every Stackly watch you own</p></div>
       <div class="search-box" style="flex:0 0 auto"><span class="search-icon"><i data-lucide="search"></i></span><input id="collection-search-input" placeholder="Search your collection…" value="${state.collectionSearch}"></div></div>
-      <div class="table-wrapper"><table class="runs-table"><thead><tr><th>Serial</th><th>Watch</th><th>Category</th><th>Purchase Date</th><th>Condition</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="table-wrapper"><table class="runs-table"><thead><tr><th></th><th>Serial</th><th>Watch</th><th>Category</th><th>Purchase Date</th><th>Condition</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
     </div>
   `;
 }

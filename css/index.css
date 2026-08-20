@@ -417,6 +417,33 @@
    @media (max-width:720px){ .scroll-cue{ display:none; } }
    
    /* =========================================================
+      HERO — GSAP animation support
+      (progressive enhancement only: every rule below still
+      leaves the hero fully visible and correctly laid out if
+      GSAP never loads or JS is disabled)
+      ========================================================= */
+   .hero-glow{
+     position:absolute; inset:0;
+     z-index:1;
+     background: radial-gradient(ellipse 55% 48% at 78% 28%, rgba(198,161,91,0.30), transparent 65%);
+     mix-blend-mode:screen;
+     opacity:0.55;
+     pointer-events:none;
+   }
+   .hero-bg{ will-change:transform; }
+   .hero-dial{ will-change:transform, opacity; }
+   .hero.js-gsap-dial .hero-dial{ animation:none; }
+   
+   .hero h1 .hero-line-mask{ overflow:hidden; }
+   .hero h1 .hero-line-mask--top{ display:inline-block; vertical-align:top; }
+   .hero h1 em.hero-line-mask{ overflow:hidden; }
+   .hero h1 .hero-line-inner{ display:inline-block; will-change:transform; }
+   
+   @media (prefers-reduced-motion: reduce){
+     .hero-glow{ display:none; }
+   }
+   
+   /* =========================================================
       SECTION SCAFFOLD
       ========================================================= */
    section{ position:relative; }
