@@ -88,17 +88,18 @@ const locationAccents = {
   "Sydney, AU": "#9aa5b1"
 };
 
+// Photo placeholders (i.pravatar.cc) with a themed placehold.co fallback per person.
 const staffUsers = [
-  { name: "Elena Voss", email: "e.voss@stackly.com", role: "Master Watchmaker", location: "Columbus, OH", status: "Active", lastLogin: "1h ago", joined: "Jan 2011" },
-  { name: "Owen Bright", email: "o.bright@stackly.com", role: "Workshop Manager", location: "Columbus, OH", status: "Active", lastLogin: "30m ago", joined: "Mar 2015" },
-  { name: "Maya Chen", email: "m.chen@stackly.com", role: "Boutique Manager", location: "New York, NY", status: "Active", lastLogin: "2h ago", joined: "Jun 2019" },
-  { name: "Priya Desai", email: "p.desai@stackly.com", role: "Quality Control Lead", location: "Columbus, OH", status: "Active", lastLogin: "4h ago", joined: "Sep 2018" },
-  { name: "Noah Kessler", email: "n.kessler@stackly.com", role: "Customer Care Lead", location: "London, UK", status: "Active", lastLogin: "1d ago", joined: "Dec 2021" },
-  { name: "Lucia Ferreira", email: "l.ferreira@stackly.com", role: "Analytics Lead", location: "Sydney, AU", status: "Active", lastLogin: "3h ago", joined: "Feb 2022" },
-  { name: "Karan Bhatt", role: "Store Director", email: "k.bhatt@stackly.com", location: "Salem, IN", status: "Invited", lastLogin: "Never", joined: "Pending" },
-  { name: "Marcus Alli", email: "m.alli@stackly.com", role: "Case Finisher", location: "Columbus, OH", status: "Suspended", lastLogin: "20d ago", joined: "Nov 2020" },
-  { name: "Dev Sharma", email: "d.sharma@stackly.com", role: "Super Admin", location: "All Locations", status: "Active", lastLogin: "8m ago", joined: "Aug 2015" },
-  { name: "Ritu Agarwal", email: "r.agarwal@stackly.com", role: "Client Care Rep", location: "Tokyo, JP", status: "Active", lastLogin: "5h ago", joined: "Apr 2023" }
+  { name: "Elena Voss", email: "e.voss@stackly.com", role: "Master Watchmaker", location: "Columbus, OH", status: "Active", lastLogin: "1h ago", joined: "Jan 2011", avatar: "../assets/ad1.webp" },
+  { name: "Owen Bright", email: "o.bright@stackly.com", role: "Workshop Manager", location: "Columbus, OH", status: "Active", lastLogin: "30m ago", joined: "Mar 2015", avatar: "../assets/ad2.webp" },
+  { name: "Maya Chen", email: "m.chen@stackly.com", role: "Boutique Manager", location: "New York, NY", status: "Active", lastLogin: "2h ago", joined: "Jun 2019", avatar: "../assets/ad3.webp" },
+  { name: "Priya Desai", email: "p.desai@stackly.com", role: "Quality Control Lead", location: "Columbus, OH", status: "Active", lastLogin: "4h ago", joined: "Sep 2018", avatar: "../assets/ad4.webp" },
+  { name: "Noah Kessler", email: "n.kessler@stackly.com", role: "Customer Care Lead", location: "London, UK", status: "Active", lastLogin: "1d ago", joined: "Dec 2021", avatar: "../assets/ad5.webp" },
+  { name: "Lucia Ferreira", email: "l.ferreira@stackly.com", role: "Analytics Lead", location: "Sydney, AU", status: "Active", lastLogin: "3h ago", joined: "Feb 2022", avatar: "../assets/ad6.webp" },
+  { name: "Karan Bhatt", role: "Store Director", email: "k.bhatt@stackly.com", location: "Salem, IN", status: "Invited", lastLogin: "Never", joined: "Pending", avatar: "../assets/ad7.webp" },
+  { name: "Marcus Alli", email: "m.alli@stackly.com", role: "Case Finisher", location: "Columbus, OH", status: "Suspended", lastLogin: "20d ago", joined: "Nov 2020", avatar: "../assets/ad8.webp" },
+  { name: "Dev Sharma", email: "d.sharma@stackly.com", role: "Super Admin", location: "All Locations", status: "Active", lastLogin: "8m ago", joined: "Aug 2015", avatar: "../assets/ad9.webp" },
+  { name: "Ritu Agarwal", email: "r.agarwal@stackly.com", role: "Client Care Rep", location: "Tokyo, JP", status: "Active", lastLogin: "5h ago", joined: "Apr 2023", avatar: "../assets/ad10.webp" }
 ];
 
 const locationsData = [
@@ -240,6 +241,13 @@ function regionTag(location) {
   const c = locationAccents[location] || "#c6a15b";
   return `<span class="region-tag" style="color:${c};border-color:${c};background:${c}22;">${location}</span>`;
 }
+// Fallback avatar (initials) used if a photo fails to load, so the layout never breaks.
+function avatarImg(u, size) {
+  const dims = size || 68;
+  const initial = encodeURIComponent(u.name.charAt(0));
+  const fallback = `https://placehold.co/${dims}x${dims}/1a1f28/e8cf98?text=${initial}`;
+  return `<img src="${u.avatar}" alt="${u.name}" class="staff-avatar-img" loading="lazy" onerror="this.onerror=null;this.src='${fallback}';">`;
+}
 function animateStatBars(){
   requestAnimationFrame(() => {
     document.querySelectorAll('.stat-bar-fill, .progress-fill').forEach(el => {
@@ -269,7 +277,7 @@ function renderDashboard() {
 
   const rows = staffUsers.slice(0, 5).map(u =>
     `<tr>
-      <td><div class="t-name">${u.name}</div><div class="t-sub">${u.email}</div></td>
+      <td><div class="t-name-wrap">${avatarImg(u, 68)}<div><div class="t-name">${u.name}</div><div class="t-sub">${u.email}</div></div></div></td>
       <td>${regionTag(u.location)}</td>
       <td class="type-col">${u.role}</td>
       <td><span class="status-badge ${statusColors[u.status]}">${u.status}</span></td>
@@ -383,7 +391,7 @@ function renderUsers() {
 
   const rows = filtered.map(u =>
     `<tr>
-      <td><div class="t-name">${u.name}</div><div class="t-sub">${u.email}</div></td>
+      <td><div class="t-name-wrap">${avatarImg(u, 68)}<div><div class="t-name">${u.name}</div><div class="t-sub">${u.email}</div></div></div></td>
       <td>${regionTag(u.location)}</td>
       <td class="type-col">${u.role}</td>
       <td><span class="status-badge ${statusColors[u.status]}">${u.status}</span></td>
