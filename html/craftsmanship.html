@@ -341,26 +341,6 @@
   </div>
 </section>
 
-<!-- ============ 9. NEWSLETTER ============ -->
-<section class="section-tight">
-  <div class="wrap">
-    <div class="newsletter reveal">
-      <div class="newsletter-copy">
-        <span class="eyebrow">Join The Circle</span>
-        <h2>Get early access before anyone else</h2>
-        <p>Limited releases, watchmaking notes, and an invitation to our Columbus atelier once a year.</p>
-      </div>
-      <form class="newsletter-form" data-demo-form data-redirect="404.html">
-        <input type="email" placeholder="you@company.com" required
-               pattern="^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$"
-               title="Enter a full email address, e.g. name@company.com"
-               aria-label="Email address">
-        <button type="submit" class="btn btn-brass">Subscribe</button>
-      </form>
-    </div>
-  </div>
-</section>
-
 <!-- ============ FOOTER ============ -->
 <footer class="site-footer">
   <div class="wrap">
@@ -424,26 +404,7 @@
 /* =========================================================
    STACKLY — Craftsmanship page script (self-contained)
    Header scroll state, mobile nav (with background scroll
-   lock), scroll reveal, cart + Add to Cart-style redirects,
-   newsletter form guard.
-
-   Fix (this pass): the submit handler called
-   applyEmailTypoCheck(field) in two places, but that function
-   — and the KNOWN_PROVIDERS map it depends on — had been left
-   out of this file's copy of the script. That's a
-   ReferenceError the moment Subscribe is clicked, which threw
-   before the code ever reached form.checkValidity(), so even a
-   fully valid you@company.com never redirected to 404.html.
-   Both are restored below, matching Collections/other pages.
-
-   Fix carried over from the New Arrivals page bug: the old
-   showFieldErrors() used field.validationMessage as the
-   inline error text whenever it was non-empty. For a pattern
-   mismatch, browsers fill that in with their own generic
-   wording ("Please match the format requested."), which is
-   confusing on an email field. This version always shows a
-   clear, purpose-written message instead, regardless of
-   browser or error type.
+   lock), scroll reveal, cart + Add to Cart-style redirects.
    ========================================================= */
 (function () {
   var header        = document.querySelector('.site-header');
@@ -486,7 +447,16 @@
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
+
+      /* Jump back to the exact scroll position instantly.
+         Without this, the page's global "scroll-behavior: smooth"
+         (see craftsmanship.css) would animate the restore, so the
+         visitor would visibly see the page scroll from the top
+         back down to where they were — instead of just staying
+         put. */
+      document.documentElement.style.scrollBehavior = 'auto';
       window.scrollTo(0, scrollY);
+      document.documentElement.style.scrollBehavior = '';
     };
 
     hamburger.addEventListener('click', function () {
@@ -533,115 +503,6 @@
     } else {
       revealEls.forEach(function (el) { el.classList.add('is-visible'); });
     }
-  }
-
-  /* ---- Email typo / completeness guard ----
-       A regex pattern alone can't catch "gmail.co" as wrong, because .co
-       is itself a real domain ending — the browser has no way to know you
-       meant to keep typing "...com". So instead we explicitly recognise
-       the big free-mail providers and require their *exact* real domain.
-       Typing "gmail.co", "gmail.con", "yahoo.co" etc. all get caught and
-       blocked with a "did you mean ...?" message. Any other domain (a
-       company domain, a less common provider) still just goes through
-       the normal pattern/required check untouched. */
-  var KNOWN_PROVIDERS = {
-    'gmail':      'gmail.com',
-    'googlemail': 'googlemail.com',
-    'yahoo':      'yahoo.com',
-    'outlook':    'outlook.com',
-    'hotmail':    'hotmail.com',
-    'live':       'live.com',
-    'msn':        'msn.com',
-    'icloud':     'icloud.com',
-    'me':         'me.com',
-    'aol':        'aol.com',
-    'proton':     'proton.me',
-    'protonmail': 'protonmail.com',
-    'zoho':       'zoho.com',
-    'yandex':     'yandex.com',
-    'rediffmail': 'rediffmail.com'
-  };
-
-  function providerTypoMessage(email) {
-    if (!email || email.indexOf('@') === -1) return '';
-    var domain = email.split('@')[1] || '';
-    domain = domain.toLowerCase().trim();
-    if (!domain) return '';
-
-    var domainRoot = domain.split('.')[0]; // "gmail" out of "gmail.co"
-    var canonical = KNOWN_PROVIDERS[domainRoot];
-
-    if (canonical && domain !== canonical) {
-      return 'Did you mean ' + canonical + '? Please enter a complete, correct email address.';
-    }
-    return '';
-  }
-
-  function applyEmailTypoCheck(field) {
-    if (!field || field.type !== 'email') return;
-    var msg = providerTypoMessage(field.value);
-    field.setCustomValidity(msg); // empty string = valid
-  }
-
-  document.querySelectorAll('input[type="email"]').forEach(function (field) {
-    field.addEventListener('input', function () { applyEmailTypoCheck(field); });
-    field.addEventListener('blur', function () { applyEmailTypoCheck(field); });
-  });
-
-  /* ---- Demo form submit ----
-       Forms marked [data-demo-form] have no real backend yet.
-       We explicitly check form.checkValidity() (which now also includes
-       the custom email-typo check above) before redirecting. If it
-       fails, we stop, trigger the native validation UI, mark the bad
-       field, and show a clear inline message next to it. Only a fully
-       valid, complete form redirects to the placeholder page. */
-  document.querySelectorAll('[data-demo-form]').forEach(function (form) {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      // Re-run the typo check right before submit too, in case a field
-      // was filled by autofill without firing input/blur.
-      form.querySelectorAll('input[type="email"]').forEach(applyEmailTypoCheck);
-
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        showFieldErrors(form);
-        return;
-      }
-
-      clearFieldErrors(form);
-      var dest = form.getAttribute('data-redirect') || '404.html';
-      window.location.href = dest;
-    });
-
-    // Clear a field's error as soon as the visitor fixes it.
-    form.querySelectorAll('input, select, textarea').forEach(function (field) {
-      field.addEventListener('input', function () {
-        if (field.type === 'email') applyEmailTypoCheck(field);
-        if (field.checkValidity()) {
-          field.classList.remove('is-invalid');
-          var msg = field.parentElement.querySelector('.field-error');
-          if (msg) msg.remove();
-        }
-      });
-    });
-  });
-
-  function showFieldErrors(form) {
-    clearFieldErrors(form);
-    var invalidFields = form.querySelectorAll(':invalid');
-    invalidFields.forEach(function (field) {
-      field.classList.add('is-invalid');
-      var msg = document.createElement('span');
-      msg.className = 'field-error';
-      msg.textContent = field.validationMessage || 'Please fill in this field.';
-      field.insertAdjacentElement('afterend', msg);
-    });
-  }
-
-  function clearFieldErrors(form) {
-    form.querySelectorAll('.field-error').forEach(function (el) { el.remove(); });
-    form.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
   }
 })();
 </script>

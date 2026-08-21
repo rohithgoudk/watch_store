@@ -106,8 +106,8 @@
       </h1>
       <p class="hero-sub hero-anim" data-hero-anim="sub">Swiss-movement watches, cased and finished by hand in our Columbus atelier. Built to be wound, worn, and passed down.</p>
       <div class="hero-cta-row" data-hero-anim="cta">
-        <a href="404.html" class="btn btn-brass">Shop Collections</a>
-        <a href="404.html" class="btn btn-line-ink">Our Story</a>
+        <a href="collections.html" class="btn btn-brass">Shop Collections</a>
+        <a href="about.html" class="btn btn-line-ink">Our Story</a>
       </div>
       <div class="hero-meta" data-hero-anim="meta">
         <div><strong>1998</strong><span>Est. In Columbus, OH</span></div>
@@ -512,7 +512,15 @@
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
+
+      /* Jump back to the exact scroll position instantly.
+         Without this, the page's global "scroll-behavior: smooth"
+         (see index.css) would animate the restore, so the visitor
+         would visibly see the page scroll from the top back down
+         to where they were — instead of just staying put. */
+      document.documentElement.style.scrollBehavior = 'auto';
       window.scrollTo(0, scrollY);
+      document.documentElement.style.scrollBehavior = '';
     };
 
     hamburger.addEventListener('click', function () {

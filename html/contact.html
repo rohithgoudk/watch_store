@@ -19,7 +19,7 @@
     <nav class="main-nav" aria-label="Primary">
       <a href="index.html">Home</a>
       <a href="collections.html">Collections</a>
-      <a href="newarrivals.html">New Arrivals</a>
+      <a href="new arrivals.html">New Arrivals</a>
       <a href="craftsmanship.html">Craftsmanship</a>
       <a href="about.html">About</a>
       <a href="contact.html" aria-current="page">Contact</a>
@@ -59,7 +59,7 @@
   <div class="mobile-nav-links">
     <a href="index.html">Home</a>
     <a href="collections.html">Collections</a>
-    <a href="newarrivals.html">New Arrivals</a>
+    <a href="new arrivals.html">New Arrivals</a>
     <a href="craftsmanship.html">Craftsmanship</a>
     <a href="about.html">About</a>
     <a href="contact.html" aria-current="page">Contact</a>
@@ -118,7 +118,7 @@
           </div>
           <div>
             <h3>Email Us</h3>
-            <p><a href="mailto:stackly@info.com">stackly@info.com</a></p>
+            <p><a href="404.html">stackly@info.com</a></p>
           </div>
         </div>
 
@@ -128,7 +128,7 @@
           </div>
           <div>
             <h3>Call Us</h3>
-            <p><a href="tel:+917010792745">070107 92745</a></p>
+            <p><a href="404.html">070107 92745</a></p>
           </div>
         </div>
 
@@ -239,8 +239,8 @@
 
     <div class="map-wrapper reveal">
       <iframe
-        src="https://www.google.com/maps?q=MMR+Complex%2C+Periyakollappatty%2C+Chinna+Thirupathi%2C+Salem%2C+Tamil+Nadu+636008&output=embed"
-        width="100%" height="100%" class="map-iframe" allowfullscreen="" loading="lazy"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3907.1616097152896!2d78.1739798!3d11.682956599999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3babefef7fd970bb%3A0xe11aef1a71994f9!2sStackly!5e0!3m2!1sen!2sin!4v1787299783000!5m2!1sen!2sin"
+        width="100%" height="100%" class="map-iframe" style="border:0;" allowfullscreen="" loading="lazy"
         referrerpolicy="strict-origin-when-cross-origin" title="Stackly atelier location map"></iframe>
     </div>
   </div>
@@ -396,7 +396,20 @@
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
+
+      /* FIX: force an instant (non-smooth) jump back to the saved
+         scroll position.
+         A plain window.scrollTo(0, scrollY) here can visibly animate
+         from the top down to scrollY on mobile browsers, because the
+         page's CSS `scroll-behavior: smooth` (set on <html>) applies
+         to this call too. To guarantee an instant jump we disable
+         scroll-behavior directly on the element for this one
+         operation, then restore whatever it was straight after. */
+      var htmlEl = document.documentElement;
+      var prevScrollBehavior = htmlEl.style.scrollBehavior;
+      htmlEl.style.scrollBehavior = 'auto';
       window.scrollTo(0, scrollY);
+      htmlEl.style.scrollBehavior = prevScrollBehavior || '';
     };
 
     hamburger.addEventListener('click', function () {
@@ -503,6 +516,20 @@
       if (errEl) errEl.textContent = '';
     });
   }
+
+  /* ---- First/Last Name: block numbers and symbols as you type ----
+     The pattern attribute already stops invalid submissions, but it
+     only checks on submit. This strips anything that isn't a letter,
+     space, apostrophe, or hyphen immediately as the user types, so
+     numbers simply can't be entered into these two fields at all. */
+  ['firstName', 'lastName'].forEach(function (id) {
+    var field = document.getElementById(id);
+    if (!field) return;
+    field.addEventListener('input', function () {
+      var cleaned = field.value.replace(/[^A-Za-z\s'-]/g, '');
+      if (cleaned !== field.value) field.value = cleaned;
+    });
+  });
 
   if (contactForm) {
     contactForm.querySelectorAll('input, select, textarea').forEach(function (field) {

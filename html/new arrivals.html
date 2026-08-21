@@ -102,8 +102,8 @@
     <h1 class="gsap-hero" data-gsap="heading">New<em>Arrivals.</em></h1>
     <p class="hero-centered-sub gsap-hero" data-gsap="sub">Fresh cases off the bench this season, favorites back in stock, and an early look at what's coming next — all in one place.</p>
     <div class="hero-centered-ctas gsap-hero" data-gsap="ctas">
-      <a href="404.html" class="btn btn-brass">Shop This Week's Drop</a>
-      <a href="404.html" class="btn btn-line-ink">See What's Coming</a>
+      <a href="new arrivals.html" class="btn btn-brass">Shop This Week's Drop</a>
+      <a href="new arrivals.html" class="btn btn-line-ink">See What's Coming</a>
     </div>
     <div class="hero-centered-stats gsap-hero" data-gsap="stats">
       <div><strong>6</strong><span>New This Month</span></div>
@@ -391,26 +391,6 @@
   </div>
 </section>
 
-<!-- ============ 9. NEWSLETTER ============ -->
-<section class="section-tight">
-  <div class="wrap">
-    <div class="newsletter reveal">
-      <div class="newsletter-copy">
-        <span class="eyebrow">Never Miss A Drop</span>
-        <h2>Get new arrivals first</h2>
-        <p>We announce every new release and restock here before anywhere else — usually 48 hours early.</p>
-      </div>
-      <form class="newsletter-form" data-demo-form data-redirect="404.html">
-        <input type="email" placeholder="you@company.com" required
-               pattern="^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$"
-               title="Enter a full email address, e.g. name@company.com"
-               aria-label="Email address">
-        <button type="submit" class="btn btn-brass">Subscribe</button>
-      </form>
-    </div>
-  </div>
-</section>
-
 <!-- ============ FOOTER ============ -->
 <footer class="site-footer">
   <div class="wrap">
@@ -520,7 +500,16 @@
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
+
+      /* Jump back to the exact scroll position instantly.
+         Without this, the page's global "scroll-behavior: smooth"
+         (see new arrivals.css) would animate the restore, so the
+         visitor would visibly see the page scroll from the top
+         back down to where they were — instead of just staying
+         put. */
+      document.documentElement.style.scrollBehavior = 'auto';
       window.scrollTo(0, scrollY);
+      document.documentElement.style.scrollBehavior = '';
     };
 
     hamburger.addEventListener('click', function () {
@@ -623,115 +612,7 @@
       revealEls.forEach(function (el) { el.classList.add('is-visible'); });
     }
   }
-/* ---- Email typo / completeness guard ----
-       A regex pattern alone can't catch "gmail.co" as wrong, because .co
-       is itself a real domain ending — the browser has no way to know you
-       meant to keep typing "...com". So instead we explicitly recognise
-       the big free-mail providers and require their *exact* real domain.
-       Typing "gmail.co", "gmail.con", "yahoo.co" etc. all get caught and
-       blocked with a "did you mean ...?" message. Any other domain (a
-       company domain, a less common provider) still just goes through
-       the normal pattern/required check untouched. */
-       var KNOWN_PROVIDERS = {
-      'gmail':      'gmail.com',
-      'googlemail': 'googlemail.com',
-      'yahoo':      'yahoo.com',
-      'outlook':    'outlook.com',
-      'hotmail':    'hotmail.com',
-      'live':       'live.com',
-      'msn':        'msn.com',
-      'icloud':     'icloud.com',
-      'me':         'me.com',
-      'aol':        'aol.com',
-      'proton':     'proton.me',
-      'protonmail': 'protonmail.com',
-      'zoho':       'zoho.com',
-      'yandex':     'yandex.com',
-      'rediffmail': 'rediffmail.com'
-    };
-  
-    function providerTypoMessage(email) {
-      if (!email || email.indexOf('@') === -1) return '';
-      var domain = email.split('@')[1] || '';
-      domain = domain.toLowerCase().trim();
-      if (!domain) return '';
-  
-      var domainRoot = domain.split('.')[0]; // "gmail" out of "gmail.co"
-      var canonical = KNOWN_PROVIDERS[domainRoot];
-  
-      if (canonical && domain !== canonical) {
-        return 'Did you mean ' + canonical + '? Please enter a complete, correct email address.';
-      }
-      return '';
-    }
-  
-    function applyEmailTypoCheck(field) {
-      if (!field || field.type !== 'email') return;
-      var msg = providerTypoMessage(field.value);
-      field.setCustomValidity(msg); // empty string = valid
-    }
-  
-    document.querySelectorAll('input[type="email"]').forEach(function (field) {
-      field.addEventListener('input', function () { applyEmailTypoCheck(field); });
-      field.addEventListener('blur', function () { applyEmailTypoCheck(field); });
-    });
-  
-    /* ---- Demo form submit ----
-       Forms marked [data-demo-form] have no real backend yet.
-       We explicitly check form.checkValidity() (which now also includes
-       the custom email-typo check above) before redirecting. If it
-       fails, we stop, trigger the native validation UI, mark the bad
-       field, and show a clear inline message next to it. Only a fully
-       valid, complete form redirects to the placeholder page. */
-    document.querySelectorAll('[data-demo-form]').forEach(function (form) {
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-  
-        // Re-run the typo check right before submit too, in case a field
-        // was filled by autofill without firing input/blur.
-        form.querySelectorAll('input[type="email"]').forEach(applyEmailTypoCheck);
-  
-        if (!form.checkValidity()) {
-          form.reportValidity();
-          showFieldErrors(form);
-          return;
-        }
-  
-        clearFieldErrors(form);
-        var dest = form.getAttribute('data-redirect') || '404.html';
-        window.location.href = dest;
-      });
-  
-      // Clear a field's error as soon as the visitor fixes it.
-      form.querySelectorAll('input, select, textarea').forEach(function (field) {
-        field.addEventListener('input', function () {
-          if (field.type === 'email') applyEmailTypoCheck(field);
-          if (field.checkValidity()) {
-            field.classList.remove('is-invalid');
-            var msg = field.parentElement.querySelector('.field-error');
-            if (msg) msg.remove();
-          }
-        });
-      });
-    });
-  
-    function showFieldErrors(form) {
-      clearFieldErrors(form);
-      var invalidFields = form.querySelectorAll(':invalid');
-      invalidFields.forEach(function (field) {
-        field.classList.add('is-invalid');
-        var msg = document.createElement('span');
-        msg.className = 'field-error';
-        msg.textContent = field.validationMessage || 'Please fill in this field.';
-        field.insertAdjacentElement('afterend', msg);
-      });
-    }
-  
-    function clearFieldErrors(form) {
-      form.querySelectorAll('.field-error').forEach(function (el) { el.remove(); });
-      form.querySelectorAll('.is-invalid').forEach(function (el) { el.classList.remove('is-invalid'); });
-    }
-  })();
+})();
 </script>
 </body>
 </html>
